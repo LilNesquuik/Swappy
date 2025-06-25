@@ -26,7 +26,7 @@ public class Config
             AccessToken = null,
             DownloadDependencies = true,
             UpdateOnStartup = true,
-            SoftRestart = true
+            ScheduleSoftRestart = true
         }
     };
     
