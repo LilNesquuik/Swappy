@@ -1,12 +1,17 @@
 using System;
-using System.Threading.Tasks;
+using LabApi.Events.Arguments.ServerEvents;
+using LabApi.Events.Handlers;
 using LabApi.Features;
 using LabApi.Loader.Features.Plugins;
 using LabApi.Features.Console;
-using LabApi.Loader;
 using LabApi.Loader.Features.Plugins.Enums;
 using Swappy.Configurations;
 using Swappy.Managers;
+
+#if EXILED
+using Exiled.API.Interfaces;
+using Exiled.Loader;
+#endif
 
 namespace Swappy;
 
@@ -31,9 +36,25 @@ public class Entrypoint : Plugin<Config>
         if (Config.Configurations.IsEmpty())
             return;
         
+        ServerEvents.MapGenerated += OnMapGenerated;
+    }
+
+    public override void Disable()
+    {
+        ServerEvents.MapGenerated -= OnMapGenerated;
+        
+        Singleton = null;
+    }
+
+    private void OnMapGenerated(MapGeneratedEventArgs ev)
+    {
+#if EXILED
+        foreach (IPlugin<IConfig> plugin in Loader.Plugins)
+#else
         foreach (Plugin plugin in PluginLoader.Plugins.Keys)
+#endif
         {
-            if (!Config.TryGetConfig(plugin.Name, out PluginConfig pluginConfig))
+            if (!Config!.TryGetConfig(plugin.Name, out PluginConfig pluginConfig))
                 continue;
 
             if (!pluginConfig.UpdateOnStartup)
@@ -41,10 +62,7 @@ public class Entrypoint : Plugin<Config>
 
             GithubManager.UpdatePlugin(plugin, pluginConfig);
         }
-    }
-
-    public override void Disable()
-    {
-        Singleton = null;
+        
+        ServerEvents.MapGenerated -= OnMapGenerated;
     }
 }

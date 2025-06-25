@@ -12,18 +12,35 @@ using Octokit;
 using Swappy.Configurations;
 using Swappy.Helpers;
 
+#if EXILED
+using Exiled.API.Interfaces;
+using Exiled.Loader;
+#endif
+
 namespace Swappy.Managers;
 
 public static class GithubManager
 {
     private static Config Config => Entrypoint.Singleton.Config!;
 
-    public static void UpdatePlugin(Plugin plugin, PluginConfig pluginConfig)
+    public static void UpdatePlugin(
+    #if EXILED
+        IPlugin<IConfig> plugin,
+    #else
+        Plugin plugin,
+    #endif
+        PluginConfig pluginConfig)
     {
         _ = Task.Run(() => UpdateAsync(plugin, pluginConfig));
     }
 
-    private static async Task UpdateAsync(Plugin plugin, PluginConfig config)
+    private static async Task UpdateAsync(
+    #if EXILED
+        IPlugin<IConfig> plugin,
+    #else
+        Plugin plugin,
+    #endif
+        PluginConfig config)
     {
         try
         {
@@ -57,8 +74,11 @@ public static class GithubManager
             Logger.Info($"[{plugin.Name}] Downloading latest release: {release.TagName}");
             
             IApiResponse<byte[]>? bytes = await client.Connection.GetRaw(new Uri(asset.BrowserDownloadUrl), new Dictionary<string, string>());
+        #if EXILED
+            File.WriteAllBytes(plugin.GetPath(), bytes.Body);
+        #else
             File.WriteAllBytes(plugin.FilePath, bytes.Body);
-            
+        #endif
             Logger.Info($"[{plugin.Name}] Successfully updated to v{parsedVersion}");
 
             if (config.DownloadDependencies)
@@ -84,7 +104,11 @@ public static class GithubManager
 
     private static async Task DownloadDependencies(
         GitHubClient client, 
+    #if EXILED
+        IPlugin<IConfig> plugin,
+    #else
         Plugin plugin,
+    #endif
         ReleaseAsset asset)
     {
         Logger.Info($"[{plugin.Name}] Downloading dependencies");
@@ -93,7 +117,11 @@ public static class GithubManager
         
         Logger.Debug($"[{plugin.Name}] Dependencies downloaded", Config.Debug);
         
+    #if EXILED
+        string dependenciesPath = Path.Combine(Exiled.API.Features.Paths.Dependencies, Server.Port.ToString());
+    #else
         string dependenciesPath = Path.Combine(PathManager.Dependencies.FullName, Server.Port.ToString());
+    #endif
         string zipPath = Path.Combine(dependenciesPath, "dependencies.zip");
         
         File.WriteAllBytes(zipPath, depBytes.Body);
