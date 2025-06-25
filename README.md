@@ -4,6 +4,11 @@
 
 ---
 
+> [!IMPORTANT]
+> Only configure **trusted repositories**! This plugin automatically installs the latest available releases. A **malicious repository** could publish an update containing **harmful code**, potentially leading to **security breaches** or **unwanted actions** on your server without your knowledge.
+
+---
+
 ## 🛠️ Features
 
 - Auto-updates selected plugins at server startup
