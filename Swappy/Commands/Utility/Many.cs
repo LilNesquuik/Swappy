@@ -16,7 +16,7 @@ public class Many : ICommand
     {
         if (!sender.HasAnyPermission($"swappy." + Command))
         {
-            response = "You do not have permission to execute this command. Required: swappy"+Command;
+            response = "You do not have permission to execute this command. Required: swappy."+Command;
             return false;
         }
 
