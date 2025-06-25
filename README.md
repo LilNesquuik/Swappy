@@ -30,11 +30,11 @@ By default, Swappy includes itself in the update list, but you’re free to remo
 
 ```yml
 plugins:
-  - pluginName: Swappy
-    repositoryOwner: LilNesquuik
-    repositoryName: Swappy
-    accessToken: null
-    downloadDependencies: true
-    updateOnStartup: true
-    scheduleSoftRestart: true
+  - plugin_name: Swappy.LabApi
+    repository_owner: LilNesquuik
+    repository_name: Swappy
+    access_token: null
+    download_dependencies: true
+    update_on_startup: true
+    schedule_soft_restart: true
 ```
