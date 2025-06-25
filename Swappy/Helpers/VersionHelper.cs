@@ -5,6 +5,7 @@ namespace Swappy.Helpers;
 
 public static class VersionHelper
 {
+    // Thank you CHATGPT im dumb asf in Regex
     private static readonly Regex VersionRegex = new(
         @"(?:version|v)?\s*(\d+)\.(\d+)\.(\d+)(?:[-]?([0-9A-Za-z\-]+))?",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
