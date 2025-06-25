@@ -28,6 +28,7 @@ By default, Swappy includes itself in the update list
 | `UpdateOnStartup`      | If `true`, checks for updates at every server launch           |
 | `ScheduleSoftRestart`  | If `true`, schedules a soft restart at the end of the round    |
 
+
 ```yml
 # List of plugins to auto-update
 plugins:
