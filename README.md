@@ -16,27 +16,25 @@
 
 ## 📦 Configuration
 
-By default, Swappy includes itself in the update list
+| Field                  | Description                                                                       |
+| ---------------------- | --------------------------------------------------------------------------------- |
+| `PluginName`           | Must exactly match the plugin’s `Name` property (e.g., `Plugin.Name`)             |
+| `RepositoryOwner`      | GitHub username or organization owning the repo                                   |
+| `RepositoryName`       | Name of the GitHub repository                                                     |
+| `AccessToken`          | (Optional) GitHub token for private repo access                                   |
+| `DownloadDependencies` | Whether to also download `dependencies.zip` or extra files in the release         |
+| `UpdateOnStartup`      | If `true`, checks for updates at every server launch                              |
+| `ScheduleSoftRestart`  | If `true`, schedules a soft restart at the end of the round                       |
 
-| Field                  | Description                                                    |
-| ---------------------- | -------------------------------------------------------------- |
-| `PluginName`           | Name of the plugin (used for logging and matching)             |
-| `RepositoryOwner`      | GitHub username or organization owning the repo                |
-| `RepositoryName`       | Name of the GitHub repository                                  |
-| `AccessToken`          | (Optional) GitHub token for private repo access                |
-| `DownloadDependencies` | Whether to also download `.deps` or extra files in the release |
-| `UpdateOnStartup`      | If `true`, checks for updates at every server launch           |
-| `ScheduleSoftRestart`  | If `true`, schedules a soft restart at the end of the round    |
-
+By default, Swappy includes itself in the update list, but you’re free to remove it from the configuration if you prefer not to auto-update it
 
 ```yml
-# List of plugins to auto-update
 plugins:
   - pluginName: Swappy
     repositoryOwner: LilNesquuik
     repositoryName: Swappy
-    accessToken: null             # Optional: GitHub token for private repos
-    downloadDependencies: true    # Download additional files if present in the release
-    updateOnStartup: true         # Check for updates on server startup
-    scheduleSoftRestart: true     # Schedule a soft restart after update if needed
+    accessToken: null
+    downloadDependencies: true
+    updateOnStartup: true
+    scheduleSoftRestart: true
 ```
