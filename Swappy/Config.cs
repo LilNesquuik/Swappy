@@ -24,6 +24,7 @@ public class Config
             RepositoryOwner = "LilNesquuik",
             RepositoryName = "Swappy",
             AccessToken = null,
+            DownloadDependencies = true,
             UpdateOnStartup = true,
             SoftRestart = true
         }
