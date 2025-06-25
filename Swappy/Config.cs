@@ -6,8 +6,16 @@ using Utils.NonAllocLINQ;
 
 namespace Swappy;
 
+#if EXILED
+public class Config : Exiled.API.Interfaces.IConfig
+#else
 public class Config
+#endif
 {
+    #if EXILED
+    public bool IsEnabled { get; set; } = true;
+    #endif
+    
     public bool Debug { get; set; }
 
     [Description("Leave this blank after you have read and acknowledged the warning message")]
@@ -20,7 +28,11 @@ public class Config
     {
         new PluginConfig
         {
-            PluginName = "Swappy",
+        #if EXILED
+            PluginName = "Swappy.Exiled",
+        #else
+            PluginName = "Swappy.LabApi",
+        #endif
             RepositoryOwner = "LilNesquuik",
             RepositoryName = "Swappy",
             AccessToken = null,

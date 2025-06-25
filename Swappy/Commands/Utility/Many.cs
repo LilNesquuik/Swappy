@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CommandSystem;
 using LabApi.Features.Permissions;
@@ -7,6 +6,11 @@ using LabApi.Loader;
 using LabApi.Loader.Features.Plugins;
 using Swappy.Configurations;
 using Swappy.Managers;
+
+#if EXILED
+using Exiled.API.Interfaces;
+using Exiled.Loader;
+#endif
 
 namespace Swappy.Commands.Utility;
 
@@ -30,7 +34,11 @@ public class Many : ICommand
 
         foreach (string name in names)
         {
+        #if EXILED
+            IPlugin<IConfig>? plugin = Loader.Plugins.FirstOrDefault(x => x.Name == name);
+        #else
             Plugin? plugin = PluginLoader.Plugins.Keys.FirstOrDefault(x => x.Name == name);
+        #endif
             if (plugin is null)
             {
                 response = "Could not find plugin: " + name;
