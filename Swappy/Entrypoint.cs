@@ -2,8 +2,9 @@ using System;
 using LabApi.Events.Arguments.ServerEvents;
 using LabApi.Events.Handlers;
 using LabApi.Features;
-using LabApi.Loader.Features.Plugins;
 using LabApi.Features.Console;
+using LabApi.Loader;
+using LabApi.Loader.Features.Plugins;
 using LabApi.Loader.Features.Plugins.Enums;
 using Swappy.Configurations;
 using Swappy.Managers;
@@ -11,22 +12,37 @@ using Swappy.Managers;
 #if EXILED
 using Exiled.API.Interfaces;
 using Exiled.Loader;
+using Exiled.API.Enums;
 #endif
 
 namespace Swappy;
 
+#if EXILED
+public class Entrypoint : Exiled.API.Features.Plugin<Config>
+#else
 public class Entrypoint : Plugin<Config>
+#endif
 {
     public static Entrypoint Singleton;
     
-    public override string Name => "Swappy";
-    public override string Description => "Your trusted companion for automatic plugin updates";
     public override string Author => "LilNesquuik";
-    public override Version Version => new(1, 0, 2);
+    public override Version Version => new(1, 0, 3);
+#if EXILED
+    public override string Name => "Swappy.Exiled";
+    public override PluginPriority Priority => PluginPriority.Lowest;
+    public override bool IgnoreRequiredVersionCheck => true;
+#else
+    public override string Name => "Swappy.LabApi";
+    public override string Description => "Your trusted companion for automatic plugin updates";
     public override Version RequiredApiVersion => LabApiProperties.CurrentVersion;
     public override LoadPriority Priority => LoadPriority.Lowest;
+#endif
 
+#if EXILED
+    public override void OnEnabled()
+#else
     public override void Enable()
+#endif
     {
         Singleton = this;
         
@@ -38,8 +54,12 @@ public class Entrypoint : Plugin<Config>
         
         ServerEvents.MapGenerated += OnMapGenerated;
     }
-
+    
+#if EXILED
+    public override void OnDisabled()
+#else
     public override void Disable()
+#endif
     {
         ServerEvents.MapGenerated -= OnMapGenerated;
         

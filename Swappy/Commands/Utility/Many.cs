@@ -2,6 +2,8 @@
 using System.Linq;
 using CommandSystem;
 using LabApi.Features.Permissions;
+using LabApi.Loader;
+using LabApi.Loader.Features.Plugins;
 using Swappy.Configurations;
 using Swappy.Managers;
 
