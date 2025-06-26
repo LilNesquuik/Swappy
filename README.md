@@ -7,6 +7,16 @@
 
 ---
 
+## 🏓 Installation
+- Download the version of the plugin that matches your framework (**LabApi** or **Exiled**).
+- Place the `.dll` file in your server's `plugins` folder.
+- Restart your server to apply the changes.
+
+> [!IMPORTANT]
+> You must include **one .dll per framework** in the plugins folder! The **LabApi version** will only update **LabApi plugins**, and the **Exiled version** will only update **Exiled plugins**. If you place a plugin from a different framework in the plugins folder, the plugin will be downloaded into the wrong folder and simply **won’t be loaded**..
+
+---
+
 ## 🛠️ Features
 
 - Auto-updates selected plugins at server startup
@@ -15,9 +25,6 @@
 - Option to schedule a soft restart after updates
 - Self-updating by default (can be disabled)
 - LabApi & Exiled Support
-
-> [!IMPORTANT]
-> You must include **one .dll per framework** in the plugins folder! The **LabApi version** will only update **LabApi plugins**, and the **Exiled version** will only update **Exiled plugins**. If you place a plugin from a different framework in the plugins folder, it simply **won’t be loaded**.
 
 ---
 
