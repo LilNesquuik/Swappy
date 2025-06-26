@@ -4,8 +4,13 @@
 
 ---
 
+## 🏓 Installation
+- Download the version of the plugin that matches your framework (**LabApi** or **Exiled**).
+- Place the `.dll` file in your server's `plugins` folder.
+- Restart your server to apply the changes.
+
 > [!IMPORTANT]
-> Only configure **trusted repositories**! This plugin automatically installs the latest available releases. A **malicious repository** could publish an update containing **harmful code**, potentially leading to **security breaches** or **unwanted actions** on your server without your knowledge.
+> You must include **one .dll per framework** in the plugins folder! The **LabApi version** will only update **LabApi plugins**, and the **Exiled version** will only update **Exiled plugins**. If you place a plugin from a different framework in the plugins folder, the plugin will be downloaded into the wrong folder and simply **won’t be loaded**.
 
 ---
 
@@ -16,10 +21,13 @@
 - Optional dependency downloading
 - Option to schedule a soft restart after updates
 - Self-updating by default (can be disabled)
+- LabApi & Exiled Support
 
 ---
 
 ## 📦 Configuration
+
+- By default, Swappy includes itself in the update list, but you’re free to remove it from the configuration if you prefer not to auto-update it
 
 | Field                  | Description                                                                       |
 | ---------------------- | --------------------------------------------------------------------------------- |
@@ -31,8 +39,6 @@
 | `UpdateOnStartup`      | If `true`, checks for updates at every server launch                              |
 | `ScheduleSoftRestart`  | If `true`, schedules a soft restart at the end of the round                       |
 
-By default, Swappy includes itself in the update list, but you’re free to remove it from the configuration if you prefer not to auto-update it
-
 ```yml
 plugins:
   - plugin_name: Swappy.LabApi
@@ -43,3 +49,6 @@ plugins:
     update_on_startup: true
     schedule_soft_restart: true
 ```
+
+> [!WARNING]
+> Only configure **trusted repositories**! This plugin automatically installs the latest available releases. A **malicious repository** could publish an update containing **harmful code**, potentially leading to **security breaches** or **unwanted actions** on your server without your knowledge.
