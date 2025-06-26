@@ -2,9 +2,6 @@
 
 **Swappy** is a lightweight companion plugin that automatically updates the plugins you choose based on a simple `.yml` configuration. It checks for updates from public (or private) GitHub repositories and downloads the latest releases when the server starts.
 
-> [!WARNING]
-> Only configure **trusted repositories**! This plugin automatically installs the latest available releases. A **malicious repository** could publish an update containing **harmful code**, potentially leading to **security breaches** or **unwanted actions** on your server without your knowledge.
-
 ---
 
 ## 🏓 Installation
@@ -30,6 +27,8 @@
 
 ## 📦 Configuration
 
+- By default, Swappy includes itself in the update list, but you’re free to remove it from the configuration if you prefer not to auto-update it
+
 | Field                  | Description                                                                       |
 | ---------------------- | --------------------------------------------------------------------------------- |
 | `PluginName`           | Must exactly match the plugin’s `Name` property (e.g., `Plugin.Name`)             |
@@ -39,8 +38,6 @@
 | `DownloadDependencies` | Whether to also download `dependencies.zip` or extra files in the release         |
 | `UpdateOnStartup`      | If `true`, checks for updates at every server launch                              |
 | `ScheduleSoftRestart`  | If `true`, schedules a soft restart at the end of the round                       |
-
-By default, Swappy includes itself in the update list, but you’re free to remove it from the configuration if you prefer not to auto-update it
 
 ```yml
 plugins:
@@ -52,3 +49,6 @@ plugins:
     update_on_startup: true
     schedule_soft_restart: true
 ```
+
+> [!WARNING]
+> Only configure **trusted repositories**! This plugin automatically installs the latest available releases. A **malicious repository** could publish an update containing **harmful code**, potentially leading to **security breaches** or **unwanted actions** on your server without your knowledge.
