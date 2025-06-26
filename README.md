@@ -10,6 +10,8 @@
 > [!IMPORTANT]
 > You must include **one .dll per framework** in the plugins folder! The **LabApi version** will only update **LabApi plugins**, and the **Exiled version** will only update **Exiled plugins**. If you place a plugin from a different framework in the plugins folder, it simply **won’t be loaded**.
 
+---
+
 ## 🛠️ Features
 
 - Auto-updates selected plugins at server startup
