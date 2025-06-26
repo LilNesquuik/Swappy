@@ -2,12 +2,13 @@
 
 **Swappy** is a lightweight companion plugin that automatically updates the plugins you choose based on a simple `.yml` configuration. It checks for updates from public (or private) GitHub repositories and downloads the latest releases when the server starts.
 
----
-
-> [!IMPORTANT]
+> [!WARNING]
 > Only configure **trusted repositories**! This plugin automatically installs the latest available releases. A **malicious repository** could publish an update containing **harmful code**, potentially leading to **security breaches** or **unwanted actions** on your server without your knowledge.
 
 ---
+
+> [!IMPORTANT]
+> You must include **one .dll per framework** in the plugins folder! The **LabApi version** will only update **LabApi plugins**, and the **Exiled version** will only update **Exiled plugins**. If you place a plugin from a different framework in the plugins folder, it simply **won’t be loaded**.
 
 ## 🛠️ Features
 
@@ -16,6 +17,7 @@
 - Optional dependency downloading
 - Option to schedule a soft restart after updates
 - Self-updating by default (can be disabled)
+- LabApi & Exiled Support
 
 ---
 
