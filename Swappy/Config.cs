@@ -17,6 +17,7 @@ public class Config
     #endif
     
     public bool Debug { get; set; }
+    public bool FullDebug { get; set; } = false;
 
     [Description("Leave this blank after you have read and acknowledged the warning message")]
     public string Warning { get; set; } =
