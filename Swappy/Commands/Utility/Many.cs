@@ -18,7 +18,7 @@ public class Many : ICommand
 {
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
-        if (!sender.HasAnyPermission($"swappy." + Command))
+        if (!sender.HasAnyPermission("swappy.*", "swappy." + Command))
         {
             response = "You do not have permission to execute this command. Required: swappy."+Command;
             return false;
@@ -26,13 +26,11 @@ public class Many : ICommand
 
         if (arguments.Count != 1)
         {
-            response = "You do not have one argument. Expected: Swappy|ProjectMER|Exiled.Loader";
+            response = "You do not have one argument. Expected: /swappy many Swappy.LabApi ProjectMER";
             return false;
         }
 
-        string[] names = arguments.At(0).Split('|');
-
-        foreach (string name in names)
+        foreach (string name in arguments)
         {
         #if EXILED
             IPlugin<IConfig>? plugin = Loader.Plugins.FirstOrDefault(x => x.Name == name);
@@ -54,7 +52,7 @@ public class Many : ICommand
             GithubManager.UpdatePlugin(plugin, pluginConfig);
         }
 
-        response = "Update plugin: " + string.Join(", ", names);
+        response = "Updated plugin: " + string.Join(", ", arguments);
         return true;
     }
 

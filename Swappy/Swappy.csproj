@@ -114,6 +114,9 @@
             <HintPath>..\packages\System.IO.Compression.ZipFile.4.3.0\lib\net46\System.IO.Compression.ZipFile.dll</HintPath>
         </Reference>
         <Reference Include="System.Net.Http" />
+        <Reference Include="System.Text.Json">
+          <HintPath>E:\References\SCPSL\latest\System.Text.Json.dll</HintPath>
+        </Reference>
         <Reference Include="System.Xml"/>
         <Reference Include="UnityEngine">
             <HintPath>$(SL_REFERENCES)\UnityEngine.dll</HintPath>
@@ -131,12 +134,19 @@
         <Compile Include="Config.cs" />
         <Compile Include="Configurations\PluginConfig.cs" />
         <Compile Include="Entrypoint.cs" />
+        <Compile Include="Enums\CycleType.cs" />
+        <Compile Include="Handlers\ServerHandler.cs" />
         <Compile Include="Helpers\VersionHelper.cs" />
         <Compile Include="Managers\GithubManager.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
     </ItemGroup>
     <ItemGroup>
       <None Include="packages.config" />
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="..\README.md">
+        <Link>README.md</Link>
+      </Content>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
