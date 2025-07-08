@@ -4,17 +4,6 @@
 
 ---
 
-## 🏓 Installation
-- Download the version of the plugin that matches your framework (**LabApi** or **Exiled**).
-- Place the `.dll` file in your server's `plugins` folder.
-- Put [`Octokit.dll`](https://github.com/LilNesquuik/Swappy/releases/download/1.3.0/dependencies.zip) in your dependencies folder.
-- Restart your server to apply the changes.
-
-> [!IMPORTANT]
-> You must include **one .dll per framework** in the plugins folder! The **LabApi version** will only update **LabApi plugins**, and the **Exiled version** will only update **Exiled plugins**. If you place a plugin from a different framework in the plugins folder, the plugin will be downloaded into the wrong folder and simply **won’t be loaded**.
-
----
-
 ## 🛠️ Features
 
 - 📅 Flexible update cycles: check for updates on server startup or every round
@@ -24,6 +13,17 @@
 - 🧩 Compatible with LabApi & Exiled frameworks
 - 🔍 Commands for manual updates and plugin management
 - 📜 Simple YAML configuration for easy setup
+
+---
+
+## 🏓 Installation
+- Download the version of the plugin that matches your framework (**LabApi** or **Exiled**).
+- Place the `.dll` file in your server's `plugins` folder.
+- Put [`Octokit.dll`](https://github.com/LilNesquuik/Swappy/releases/download/1.3.0/dependencies.zip) in your dependencies folder.
+- Restart your server to apply the changes.
+
+> [!IMPORTANT]
+> You must include **one .dll per framework** in the plugins folder! The **LabApi version** will only update **LabApi plugins**, and the **Exiled version** will only update **Exiled plugins**. If you place a plugin from a different framework in the plugins folder, the plugin will be downloaded into the wrong folder and simply **won’t be loaded**.
 
 ---
 
