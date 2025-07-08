@@ -30,7 +30,7 @@ public class Entrypoint : Plugin<Config>
     public static Entrypoint Singleton;
     
     public override string Author => "LilNesquuik";
-    public override Version Version => new(1, 3, 0);
+    public override Version Version => new(1, 3, 1);
 #if EXILED
     public override string Name => "Swappy.Exiled";
     public override PluginPriority Priority => PluginPriority.Lowest;

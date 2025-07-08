@@ -130,7 +130,10 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Commands\SwappyParentCommand.cs" />
-        <Compile Include="Commands\Utility\Many.cs" />
+        <Compile Include="Commands\Utility\Add.cs" />
+        <Compile Include="Commands\Utility\Install.cs" />
+        <Compile Include="Commands\Utility\Plugins.cs" />
+        <Compile Include="Commands\Utility\Remove.cs" />
         <Compile Include="Config.cs" />
         <Compile Include="Configurations\PluginConfig.cs" />
         <Compile Include="Entrypoint.cs" />

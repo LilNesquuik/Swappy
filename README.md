@@ -53,3 +53,17 @@ plugins:
 
 > [!WARNING]
 > Only configure **trusted repositories**! This plugin automatically installs the latest available releases. A **malicious repository** could publish an update containing **harmful code**, potentially leading to **security breaches** or **unwanted actions** on your server without your knowledge.
+
+--- 
+
+## 💻 Commands
+
+- Swappy provides a few commands to manage updates and view plugin information. You can use these commands in the server console or in-game if you have the necessary permissions.
+
+| Command                  | Description                                  |
+|--------------------------|----------------------------------------------|
+| `swappy`/`swappy_exiled` | Parent command to access Swappy features     |
+| `swappy install`         | Manually checks for updates and applies them |
+| `swappy plugins`         | Lists all plugins configured for updates     |
+| `swappy add`             | Adds a new plugin to the update list         |
+| `swappy remove`          | Removes a plugin from the update list        |
