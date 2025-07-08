@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using Swappy.Enums;
 
 namespace Swappy.Configurations;
 
@@ -21,8 +22,8 @@ public class PluginConfig
     [Description("Whether to download and extract dependencies.zip from releases")]
     public bool DownloadDependencies { get; set; }
     
-    [Description("Whether to check for updates when the plugin loads")]
-    public bool UpdateOnStartup { get; set; }
+    [Description("Defines how often update checks are performed when loading the plugin")]
+    public CycleType Cycle { get; set; }
     
     [Description("Whether to schedule a server restart after updating")]
     public bool ScheduleSoftRestart { get; set; }

@@ -109,7 +109,12 @@ public static class GithubManager
             }
             
             if (config.ScheduleSoftRestart)
-                MainThreadDispatcher.Dispatch(() => ServerStatic.StopNextRound = ServerStatic.NextRoundAction.Restart);
+                MainThreadDispatcher.Dispatch(() =>
+                {
+                    Logger.Info($"[{plugin.Name}] Scheduling server restart after update");
+                    
+                    ServerStatic.StopNextRound = ServerStatic.NextRoundAction.Restart;
+                });
         }
         catch (Exception ex)
         {

@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using LabApi.Events.Arguments.ServerEvents;
+using LabApi.Events.CustomHandlers;
 using LabApi.Events.Handlers;
 using LabApi.Features;
 using LabApi.Features.Console;
@@ -7,6 +9,8 @@ using LabApi.Loader;
 using LabApi.Loader.Features.Plugins;
 using LabApi.Loader.Features.Plugins.Enums;
 using Swappy.Configurations;
+using Swappy.Enums;
+using Swappy.Handlers;
 using Swappy.Managers;
 
 #if EXILED
@@ -26,7 +30,7 @@ public class Entrypoint : Plugin<Config>
     public static Entrypoint Singleton;
     
     public override string Author => "LilNesquuik";
-    public override Version Version => new(1, 2, 0);
+    public override Version Version => new(1, 3, 0);
 #if EXILED
     public override string Name => "Swappy.Exiled";
     public override PluginPriority Priority => PluginPriority.Lowest;
@@ -38,6 +42,8 @@ public class Entrypoint : Plugin<Config>
     public override LoadPriority Priority => LoadPriority.Lowest;
 #endif
 
+    private ServerHandler _serverHandler;
+
 #if EXILED
     public override void OnEnabled()
 #else
@@ -46,13 +52,27 @@ public class Entrypoint : Plugin<Config>
     {
         Singleton = this;
         
+        _serverHandler = new ServerHandler(Config!);
+        
         if (!string.IsNullOrEmpty(Config!.Warning))
             Logger.Error(Config.Warning);
         
-        if (Config.Configurations.IsEmpty())
-            return;
+        CustomHandlersManager.RegisterEventsHandler(_serverHandler);
         
-        ServerEvents.MapGenerated += OnMapGenerated;
+        foreach (PluginConfig pluginConfig in Config!.Configurations)
+        {
+            if (pluginConfig.Cycle is CycleType.Never or not (CycleType.OnStartup or CycleType.EachRound))
+                continue;
+        #if EXILED
+            IPlugin<IConfig>? plugin = Loader.Plugins.FirstOrDefault(x => x.Name == pluginConfig.PluginName);
+        #else 
+            Plugin? plugin = PluginLoader.Plugins.Keys.FirstOrDefault(x => x.Name == pluginConfig.PluginName);
+        #endif
+            if (plugin is null)
+                continue;
+
+            GithubManager.UpdatePlugin(plugin, pluginConfig);
+        }
     }
     
 #if EXILED
@@ -61,28 +81,10 @@ public class Entrypoint : Plugin<Config>
     public override void Disable()
 #endif
     {
-        ServerEvents.MapGenerated -= OnMapGenerated;
+        CustomHandlersManager.UnregisterEventsHandler(_serverHandler);
         
-        Singleton = null;
-    }
-
-    private void OnMapGenerated(MapGeneratedEventArgs ev)
-    {
-#if EXILED
-        foreach (IPlugin<IConfig> plugin in Loader.Plugins)
-#else
-        foreach (Plugin plugin in PluginLoader.Plugins.Keys)
-#endif
-        {
-            if (!Config!.TryGetConfig(plugin.Name, out PluginConfig pluginConfig))
-                continue;
-
-            if (!pluginConfig.UpdateOnStartup)
-                continue;
-
-            GithubManager.UpdatePlugin(plugin, pluginConfig);
-        }
+        _serverHandler = null!;
         
-        ServerEvents.MapGenerated -= OnMapGenerated;
+        Singleton = null!;
     }
 }

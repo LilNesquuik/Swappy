@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using Swappy.Configurations;
+using Swappy.Enums;
 using Utils.NonAllocLINQ;
 
 namespace Swappy;
@@ -38,7 +39,7 @@ public class Config
             RepositoryName = "Swappy",
             AccessToken = null,
             DownloadDependencies = true,
-            UpdateOnStartup = true,
+            Cycle = CycleType.OnStartup,
             ScheduleSoftRestart = true
         }
     };

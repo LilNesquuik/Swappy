@@ -1,4 +1,4 @@
-# Swappy - Plugin Updater
+# Swappy - SCP:SL Plugin Updater
 
 **Swappy** is a lightweight companion plugin that automatically updates the plugins you choose based on a simple `.yml` configuration. It checks for updates from public (or private) GitHub repositories and downloads the latest releases when the server starts.
 
@@ -16,12 +16,12 @@
 
 ## 🛠️ Features
 
-- Auto-updates selected plugins at server startup
-- Supports both public and private GitHub repositories
-- Optional dependency downloading
-- Option to schedule a soft restart after updates
-- Self-updating by default (can be disabled)
-- LabApi & Exiled Support
+- 🚀 Automatically updates selected plugins at server startup
+- 🔒 Supports both public and private GitHub repositories
+- 📦 Optional dependency downloading
+- ⏰ Configurable update frequency: each round or on server startup
+- ♻️ Self-updating enabled by default (can be disabled)
+- 🧩 Compatible with LabApi & Exiled frameworks
 
 ---
 
@@ -29,15 +29,15 @@
 
 - By default, Swappy includes itself in the update list, but you’re free to remove it from the configuration if you prefer not to auto-update it
 
-| Field                  | Description                                                                       |
-| ---------------------- | --------------------------------------------------------------------------------- |
-| `PluginName`           | Must exactly match the plugin’s `Name` property (e.g., `Plugin.Name`)             |
-| `RepositoryOwner`      | GitHub username or organization owning the repo                                   |
-| `RepositoryName`       | Name of the GitHub repository                                                     |
-| `AccessToken`          | (Optional) GitHub token for private repo access                                   |
-| `DownloadDependencies` | Whether to also download `dependencies.zip` or extra files in the release         |
-| `UpdateOnStartup`      | If `true`, checks for updates at every server launch                              |
-| `ScheduleSoftRestart`  | If `true`, schedules a soft restart at the end of the round                       |
+| Field                  | Description                                                                          |
+|------------------------|--------------------------------------------------------------------------------------|
+| `PluginName`           | Must exactly match the plugin’s `Name` property (e.g., `Plugin.Name`)                |
+| `RepositoryOwner`      | GitHub username or organization owning the repo                                      |
+| `RepositoryName`       | Name of the GitHub repository                                                        |
+| `AccessToken`          | (Optional) GitHub token for private repo access                                      |
+| `DownloadDependencies` | Whether to also download `dependencies.zip` or extra files in the release            |
+| `Cycle`                | Update check frequency: `EachRound` (every round) or `OnStartup` (on server startup) |
+| `ScheduleSoftRestart`  | If `true`, schedules a soft restart at the end of the round                          |
 
 ```yml
 plugins:
@@ -46,7 +46,7 @@ plugins:
     repository_name: Swappy
     access_token: null
     download_dependencies: true
-    update_on_startup: true
+    cycle: OnStartup
     schedule_soft_restart: true
 ```
 
