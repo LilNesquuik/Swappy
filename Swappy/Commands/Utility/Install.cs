@@ -14,11 +14,11 @@ using Exiled.Loader;
 
 namespace Swappy.Commands.Utility;
 
-public class Many : ICommand
+public class Install : ICommand
 {
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
-        if (!sender.HasAnyPermission("swappy.*", "swappy." + Command))
+        if (!sender.HasPermissions("swappy." + Command))
         {
             response = "You do not have permission to execute this command. Required: swappy."+Command;
             return false;
@@ -56,7 +56,7 @@ public class Many : ICommand
         return true;
     }
 
-    public string Command => "many";
+    public string Command => "install";
     public string[] Aliases => Array.Empty<string>();
     public string Description => "Update a list of plugins";
 }

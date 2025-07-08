@@ -4,25 +4,26 @@
 
 ---
 
+## 🛠️ Features
+
+- 📅 Flexible update cycles: check for updates on server startup or every round
+- 🔒 Supports both public and private GitHub repositories
+- 📦 Optional dependency downloading
+- ♻️ Self-updating enabled by default (can be disabled)
+- 🧩 Compatible with LabApi & Exiled frameworks
+- 🔍 Commands for manual updates and plugin management
+- 📜 Simple YAML configuration for easy setup
+
+---
+
 ## 🏓 Installation
 - Download the version of the plugin that matches your framework (**LabApi** or **Exiled**).
 - Place the `.dll` file in your server's `plugins` folder.
-- Put `Octokit.dll` in your dependencies folder.
+- Put [`Octokit.dll`](https://github.com/LilNesquuik/Swappy/releases/download/1.3.0/dependencies.zip) in your dependencies folder.
 - Restart your server to apply the changes.
 
 > [!IMPORTANT]
 > You must include **one .dll per framework** in the plugins folder! The **LabApi version** will only update **LabApi plugins**, and the **Exiled version** will only update **Exiled plugins**. If you place a plugin from a different framework in the plugins folder, the plugin will be downloaded into the wrong folder and simply **won’t be loaded**.
-
----
-
-## 🛠️ Features
-
-- 🚀 Automatically updates selected plugins at server startup
-- 🔒 Supports both public and private GitHub repositories
-- 📦 Optional dependency downloading
-- ⏰ Configurable update frequency: each round or on server startup
-- ♻️ Self-updating enabled by default (can be disabled)
-- 🧩 Compatible with LabApi & Exiled frameworks
 
 ---
 
@@ -53,3 +54,17 @@ plugins:
 
 > [!WARNING]
 > Only configure **trusted repositories**! This plugin automatically installs the latest available releases. A **malicious repository** could publish an update containing **harmful code**, potentially leading to **security breaches** or **unwanted actions** on your server without your knowledge.
+
+--- 
+
+## 💻 Commands
+
+- Swappy provides a few commands to manage updates and view plugin information. You can use these commands in the server console or in-game if you have the necessary permissions.
+
+| Command                  | Description                                  |
+|--------------------------|----------------------------------------------|
+| `swappy`/`swappy_exiled` | Parent command to access Swappy features     |
+| `swappy install`         | Manually checks for updates and applies them |
+| `swappy plugins`         | Lists all plugins configured for updates     |
+| `swappy add`             | Adds a new plugin to the update list         |
+| `swappy remove`          | Removes a plugin from the update list        |
