@@ -7,7 +7,7 @@
 ## 🏓 Installation
 - Download the version of the plugin that matches your framework (**LabApi** or **Exiled**).
 - Place the `.dll` file in your server's `plugins` folder.
-- Put `Octokit.dll` in your dependencies folder.
+- Put [`Octokit.dll`](https://github.com/LilNesquuik/Swappy/releases/download/1.3.0/dependencies.zip) in your dependencies folder.
 - Restart your server to apply the changes.
 
 > [!IMPORTANT]
@@ -17,12 +17,13 @@
 
 ## 🛠️ Features
 
-- 🚀 Automatically updates selected plugins at server startup
+- 📅 Flexible update cycles: check for updates on server startup or every round
 - 🔒 Supports both public and private GitHub repositories
 - 📦 Optional dependency downloading
-- ⏰ Configurable update frequency: each round or on server startup
 - ♻️ Self-updating enabled by default (can be disabled)
 - 🧩 Compatible with LabApi & Exiled frameworks
+- 🔍 Commands for manual updates and plugin management
+- 📜 Simple YAML configuration for easy setup
 
 ---
 
