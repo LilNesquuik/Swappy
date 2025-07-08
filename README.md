@@ -7,6 +7,7 @@
 ## 🏓 Installation
 - Download the version of the plugin that matches your framework (**LabApi** or **Exiled**).
 - Place the `.dll` file in your server's `plugins` folder.
+- Put `Octokit.dll` in your dependencies folder.
 - Restart your server to apply the changes.
 
 > [!IMPORTANT]
