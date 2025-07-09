@@ -79,8 +79,10 @@ public static class GithubManager
                 Logger.Error($"[{plugin.Name}] No matching .dll found in latest release. Expected: {config.PluginName}.dll");
                 return;
             }
+            
+            string pluginUrl = string.IsNullOrEmpty(config.AccessToken) ? asset.BrowserDownloadUrl : asset.Url;
 
-            Logger.Info($"[{plugin.Name}] Downloading latest release: {release.TagName}, url: {asset.Url}");
+            Logger.Info($"[{plugin.Name}] Downloading latest release: {release.TagName}, url: {pluginUrl}");
 
         #if EXILED
             string pluginPath = plugin.GetPath();
@@ -88,7 +90,7 @@ public static class GithubManager
             string pluginPath = plugin.FilePath;
         #endif
             
-            if (!await DownloadAsync(plugin.Name, asset.Url, pluginPath))
+            if (!await DownloadAsync(plugin.Name, pluginUrl, pluginPath, config.AccessToken))
             {
                 Logger.Error($"[{plugin.Name}] Failed to download plugin asset");
                 return;
@@ -100,7 +102,55 @@ public static class GithubManager
             {
                 ReleaseAsset? dependenciesAsset = release.Assets.FirstOrDefault(x => x.Name == "dependencies.zip");
                 if (dependenciesAsset is not null)
-                    _ = Task.Run(async () => await DownloadDependencies(client, plugin, dependenciesAsset));
+                {
+                    Logger.Info($"[{plugin.Name}] Downloading dependencies");
+        
+                #if EXILED
+                    string dependenciesPath = Path.Combine(Exiled.API.Features.Paths.Dependencies, Server.Port.ToString());
+                #else
+                    string dependenciesPath = Path.Combine(PathManager.Dependencies.FullName, Server.Port.ToString());
+                #endif
+                    string zipPath = Path.Combine(dependenciesPath, "dependencies.zip");
+        
+                    string depUrl = string.IsNullOrEmpty(config.AccessToken) ? dependenciesAsset.BrowserDownloadUrl : dependenciesAsset.Url;
+                    
+                    if (!await DownloadAsync(plugin.Name, depUrl, zipPath))
+                    {
+                        Logger.Error($"[{plugin.Name}] Failed to download dependencies from {depUrl}");
+                        return;
+                    }
+        
+                    Logger.Debug($"[{plugin.Name}] Dependencies zip file created", Config.Debug);
+                
+                    using (ZipArchive archive = ZipFile.OpenRead(zipPath))
+                    {
+                        Logger.Debug($"[{plugin.Name}] Verifying dependencies integrity", Config.Debug);
+                    
+                        foreach (ZipArchiveEntry entry in archive.Entries)
+                        {
+                            string destinationPath = Path.Combine(dependenciesPath, entry.FullName);
+
+                            if (!entry.Name.EndsWith(".dll"))
+                            {
+                                Logger.Debug($"[{plugin.Name}] Skipping non-dll file: {entry.Name}", Config.Debug);
+                                continue;
+                            }
+                        
+                            if (File.Exists(destinationPath))
+                            {
+                                Logger.Debug($"[{plugin.Name}] Deleted old dependencies found in zip: {entry.Name}");
+                                File.Delete(destinationPath);
+                            }
+                
+                            Logger.Debug($"[{plugin.Name}] Extracting file: {entry.Name}", Config.Debug);
+                            entry.ExtractToFile(destinationPath);
+                        }
+                    }
+        
+                    File.Delete(zipPath);
+                
+                    Logger.Info($"[{plugin.Name}] Dependencies successfully extracted");
+                }
                 else
                 {
                     Logger.Warn($"[{plugin.Name}] Dependencies don't exist");
@@ -122,62 +172,6 @@ public static class GithubManager
         }
     }
 
-    private static async Task DownloadDependencies(
-        GitHubClient client, 
-    #if EXILED
-        IPlugin<IConfig> plugin,
-    #else
-        Plugin plugin,
-    #endif
-        ReleaseAsset asset)
-    {
-        Logger.Info($"[{plugin.Name}] Downloading dependencies");
-        
-    #if EXILED
-        string dependenciesPath = Path.Combine(Exiled.API.Features.Paths.Dependencies, Server.Port.ToString());
-    #else
-        string dependenciesPath = Path.Combine(PathManager.Dependencies.FullName, Server.Port.ToString());
-    #endif
-        string zipPath = Path.Combine(dependenciesPath, "dependencies.zip");
-        
-        if (!await DownloadAsync(plugin.Name, asset.Url, zipPath))
-        {
-            Logger.Error($"[{plugin.Name}] Failed to download dependencies from {asset.Url}");
-            return;
-        }
-        
-        Logger.Debug($"[{plugin.Name}] Dependencies zip file created", Config.Debug);
-                
-        using (ZipArchive archive = ZipFile.OpenRead(zipPath))
-        {
-            Logger.Debug($"[{plugin.Name}] Verifying dependencies integrity", Config.Debug);
-                    
-            foreach (ZipArchiveEntry entry in archive.Entries)
-            {
-                string destinationPath = Path.Combine(dependenciesPath, entry.FullName);
-
-                if (!entry.Name.EndsWith(".dll"))
-                {
-                    Logger.Debug($"[{plugin.Name}] Skipping non-dll file: {entry.Name}", Config.Debug);
-                    continue;
-                }
-                        
-                if (File.Exists(destinationPath))
-                {
-                    Logger.Debug($"[{plugin.Name}] Deleted old dependencies found in zip: {entry.Name}");
-                    File.Delete(destinationPath);
-                }
-                
-                Logger.Debug($"[{plugin.Name}] Extracting file: {entry.Name}", Config.Debug);
-                entry.ExtractToFile(destinationPath);
-            }
-        }
-        
-        File.Delete(zipPath);
-                
-        Logger.Info($"[{plugin.Name}] Dependencies successfully extracted");
-    }
-
     private static async Task<Release?> GetLatestReleaseAsync(GitHubClient client, PluginConfig config)
     {
         IReadOnlyList<Release>? releases = await client.Repository.Release.GetAll(config.RepositoryOwner, config.RepositoryName);
@@ -195,12 +189,12 @@ public static class GithubManager
 
     }
 
-    private static async Task<bool> DownloadAsync(string name, string url, string destination)
+    private static async Task<bool> DownloadAsync(string name, string url, string destination, string? token = null)
     {
         using HttpClient httpClient = new();
         httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Swappy/1.0");
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Octet));
-        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Config.Configurations.FirstOrDefault(c => c.PluginName == name)?.AccessToken ?? string.Empty);
+        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         
         try
         {
