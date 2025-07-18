@@ -5,7 +5,7 @@
 ## 🤝 Trusted By
 - [`Access Community`](https://access-community.fr)
 
-*Wanna be part of the list? [Contact me](https://discord.com/users/542790005219655687) and let's collaborate!*  
+*Wanna be part of the list ? [Contact me](https://discord.com/users/542790005219655687)*  
 
 ---
 
