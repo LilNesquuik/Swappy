@@ -2,6 +2,10 @@
 
 **Swappy** is a lightweight companion plugin that automatically updates the plugins you choose based on a simple `.yml` configuration. It checks for updates from public (or private) GitHub repositories and downloads the latest releases when the server starts.
 
+## 🤝 Trusted By
+- [`Access Community`](https://access-community.fr)
+*Wanna be part of the list? [Contact me](https://discord.com/users/542790005219655687) and let's collaborate!*  
+
 ---
 
 ## 🛠️ Features
