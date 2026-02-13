@@ -1,151 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props"
-            Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')"/>
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
         <ProjectGuid>{B31A9EB2-75EE-4E7C-B2B5-73319974D41B}</ProjectGuid>
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
         <RootNamespace>Swappy</RootNamespace>
-        <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+        <AssemblyName>Swappy</AssemblyName>
+        <TargetFramework>net48</TargetFramework>
         <FileAlignment>512</FileAlignment>
-        <LangVersion>11</LangVersion>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'LabApi|AnyCPU' ">
-        <PlatformTarget>AnyCPU</PlatformTarget>
-        <DebugType>pdbonly</DebugType>
+        <LangVersion>12</LangVersion>
+        <PlatformTarget>x64</PlatformTarget>
         <Optimize>true</Optimize>
-        <OutputPath>bin\LabApi\</OutputPath>
+        <OutputPath>bin\Release\</OutputPath>
         <DefineConstants>TRACE</DefineConstants>
-        <AssemblyName>Swappy.LabApi</AssemblyName>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <Nullable>enable</Nullable>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>CS1591</NoWarn>
     </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Exiled|AnyCPU' ">
-      <OutputPath>bin\Exiled\</OutputPath>
-      <Optimize>true</Optimize>
-      <DebugType>pdbonly</DebugType>
-      <DefineConstants>EXILED</DefineConstants>
-      <AssemblyName>Swappy.Exiled</AssemblyName>
-    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Northwood.LabAPI" Version="1.1.5" />
+        <PackageReference Include="NVorbis" Version="0.10.5"/>
+        <PackageReference Include="Octokit" Version="14.0.0" />
+    </ItemGroup>
     <ItemGroup>
         <Reference Include="Assembly-CSharp">
             <HintPath>$(SL_REFERENCES)\Assembly-CSharp-Publicized.dll</HintPath>
         </Reference>
-        <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-          <HintPath>..\packages\ExMod.Exiled.9.6.1\lib\net48\Assembly-CSharp-Publicized.dll</HintPath>
-        </Reference>
         <Reference Include="Assembly-CSharp-firstpass">
             <HintPath>$(SL_REFERENCES)\Assembly-CSharp-firstpass.dll</HintPath>
         </Reference>
-        <Reference Include="BouncyCastle.Cryptography">
-            <HintPath>$(SL_REFERENCES)\BouncyCastle.Cryptography.dll</HintPath>
-        </Reference>
-        <Reference Include="Caress">
-            <HintPath>$(SL_REFERENCES)\Caress.dll</HintPath>
-        </Reference>
-        <Reference Include="CommandSystem.Core, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-          <HintPath>..\packages\ExMod.Exiled.9.6.1\lib\net48\CommandSystem.Core.dll</HintPath>
-        </Reference>
-        <Reference Include="CustomPasses">
-            <HintPath>$(SL_REFERENCES)\CustomPasses.dll</HintPath>
-        </Reference>
-        <Reference Include="Exiled.API, Version=9.6.1.0, Culture=neutral, processorArchitecture=Amd64">
-          <HintPath>..\packages\ExMod.Exiled.9.6.1\lib\net48\Exiled.API.dll</HintPath>
-        </Reference>
-        <Reference Include="Exiled.CreditTags, Version=9.6.1.0, Culture=neutral, processorArchitecture=Amd64">
-          <HintPath>..\packages\ExMod.Exiled.9.6.1\lib\net48\Exiled.CreditTags.dll</HintPath>
-        </Reference>
-        <Reference Include="Exiled.CustomItems, Version=9.6.1.0, Culture=neutral, processorArchitecture=Amd64">
-          <HintPath>..\packages\ExMod.Exiled.9.6.1\lib\net48\Exiled.CustomItems.dll</HintPath>
-        </Reference>
-        <Reference Include="Exiled.CustomRoles, Version=9.6.1.0, Culture=neutral, processorArchitecture=Amd64">
-          <HintPath>..\packages\ExMod.Exiled.9.6.1\lib\net48\Exiled.CustomRoles.dll</HintPath>
-        </Reference>
-        <Reference Include="Exiled.Events, Version=9.6.1.0, Culture=neutral, processorArchitecture=Amd64">
-          <HintPath>..\packages\ExMod.Exiled.9.6.1\lib\net48\Exiled.Events.dll</HintPath>
-        </Reference>
-        <Reference Include="Exiled.Loader, Version=9.6.1.0, Culture=neutral, processorArchitecture=Amd64">
-          <HintPath>..\packages\ExMod.Exiled.9.6.1\lib\net48\Exiled.Loader.dll</HintPath>
-        </Reference>
-        <Reference Include="Exiled.Permissions, Version=9.6.1.0, Culture=neutral, processorArchitecture=Amd64">
-          <HintPath>..\packages\ExMod.Exiled.9.6.1\lib\net48\Exiled.Permissions.dll</HintPath>
-        </Reference>
-        <Reference Include="LabApi, Version=1.1.0.0, Culture=neutral, processorArchitecture=Amd64">
-          <HintPath>..\packages\ExMod.Exiled.9.6.1\lib\net48\LabApi.dll</HintPath>
+        <Reference Include="CommandSystem.Core">
+            <HintPath>$(SL_REFERENCES)\CommandSystem.Core.dll</HintPath>
         </Reference>
         <Reference Include="Mirror">
-            <HintPath>$(SL_REFERENCES)\Mirror-Publicized.dll</HintPath>
+            <HintPath>$(SL_REFERENCES)\Mirror.dll</HintPath>
         </Reference>
-        <Reference Include="Mirror.Components">
-            <HintPath>$(SL_REFERENCES)\Mirror.Components.dll</HintPath>
+        <Reference Include="mscorlib">
+            <HintPath>$(SL_REFERENCES)\mscorlib.dll</HintPath>
         </Reference>
-        <Reference Include="mscorlib" />
-        <Reference Include="NorthwoodLib, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-          <HintPath>..\packages\ExMod.Exiled.9.6.1\lib\net48\NorthwoodLib.dll</HintPath>
+        <Reference Include="netstandard">
+            <HintPath>$(SL_REFERENCES)\netstandard.dll</HintPath>
         </Reference>
-        <Reference Include="Octokit, Version=14.0.0.0, Culture=neutral, PublicKeyToken=0be8860aee462442, processorArchitecture=MSIL">
-            <HintPath>..\packages\Octokit.14.0.0\lib\netstandard2.0\Octokit.dll</HintPath>
+        <Reference Include="NorthwoodLib">
+            <HintPath>$(SL_REFERENCES)\NorthwoodLib.dll</HintPath>
         </Reference>
         <Reference Include="Pooling">
             <HintPath>$(SL_REFERENCES)\Pooling.dll</HintPath>
         </Reference>
-        <Reference Include="System"/>
-        <Reference Include="System.Core"/>
-        <Reference Include="System.Data"/>
-        <Reference Include="System.IO.Compression, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-            <HintPath>..\packages\System.IO.Compression.4.3.0\lib\net46\System.IO.Compression.dll</HintPath>
+        <Reference Include="System">
+            <HintPath>$(SL_REFERENCES)\System.dll</HintPath>
         </Reference>
-        <Reference Include="System.IO.Compression.FileSystem" />
-        <Reference Include="System.IO.Compression.ZipFile, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-            <HintPath>..\packages\System.IO.Compression.ZipFile.4.3.0\lib\net46\System.IO.Compression.ZipFile.dll</HintPath>
+        <Reference Include="System.Collections">
+            <HintPath>$(SL_REFERENCES)\System.Collections.dll</HintPath>
         </Reference>
-        <Reference Include="System.Net.Http" />
-        <Reference Include="System.Text.Json">
-          <HintPath>E:\References\SCPSL\latest\System.Text.Json.dll</HintPath>
+        <Reference Include="System.Core">
+            <HintPath>$(SL_REFERENCES)\System.Core.dll</HintPath>
         </Reference>
-        <Reference Include="System.Xml"/>
+        <Reference Include="System.Diagnostics.Debug">
+            <HintPath>$(SL_REFERENCES)\System.Diagnostics.Debug.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Diagnostics.StackTrace">
+            <HintPath>$(SL_REFERENCES)\System.Diagnostics.StackTrace.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Globalization">
+            <HintPath>$(SL_REFERENCES)\System.Globalization.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Globalization.Extensions">
+            <HintPath>$(SL_REFERENCES)\System.Globalization.Extensions.dll</HintPath>
+        </Reference>
+        <Reference Include="System.IO.Compression">
+            <HintPath>$(SL_REFERENCES)\System.IO.Compression.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Linq">
+            <HintPath>$(SL_REFERENCES)\System.Linq.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Net.Http">
+            <HintPath>$(SL_REFERENCES)\System.Net.Http.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Net.Primitives">
+            <HintPath>$(SL_REFERENCES)\System.Net.Primitives.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Runtime">
+            <HintPath>$(SL_REFERENCES)\System.Runtime.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Runtime.Extensions">
+            <HintPath>$(SL_REFERENCES)\System.Runtime.Extensions.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Runtime.Serialization.Xml">
+            <HintPath>$(SL_REFERENCES)\System.Runtime.Serialization.Xml.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Text.RegularExpressions">
+            <HintPath>$(SL_REFERENCES)\System.Text.RegularExpressions.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Threading">
+            <HintPath>$(SL_REFERENCES)\System.Threading.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Threading.Tasks">
+            <HintPath>$(SL_REFERENCES)\System.Threading.Tasks.dll</HintPath>
+        </Reference>
         <Reference Include="UnityEngine">
             <HintPath>$(SL_REFERENCES)\UnityEngine.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.AudioModule">
+            <HintPath>$(SL_REFERENCES)\UnityEngine.AudioModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.CoreModule">
             <HintPath>$(SL_REFERENCES)\UnityEngine.CoreModule.dll</HintPath>
         </Reference>
-        <Reference Include="YamlDotNet, Version=11.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
-          <HintPath>..\packages\ExMod.Exiled.9.6.1\lib\net48\YamlDotNet.dll</HintPath>
+        <Reference Include="UnityEngine.PhysicsModule">
+            <HintPath>$(SL_REFERENCES)\UnityEngine.PhysicsModule.dll</HintPath>
         </Reference>
     </ItemGroup>
-    <ItemGroup>
-        <Compile Include="Commands\SwappyParentCommand.cs" />
-        <Compile Include="Commands\Utility\Add.cs" />
-        <Compile Include="Commands\Utility\Install.cs" />
-        <Compile Include="Commands\Utility\Plugins.cs" />
-        <Compile Include="Commands\Utility\Remove.cs" />
-        <Compile Include="Config.cs" />
-        <Compile Include="Configurations\PluginConfig.cs" />
-        <Compile Include="Entrypoint.cs" />
-        <Compile Include="Enums\CycleType.cs" />
-        <Compile Include="Handlers\ServerHandler.cs" />
-        <Compile Include="Helpers\VersionHelper.cs" />
-        <Compile Include="Managers\GithubManager.cs" />
-        <Compile Include="Properties\AssemblyInfo.cs"/>
-    </ItemGroup>
-    <ItemGroup>
-      <None Include="packages.config" />
-    </ItemGroup>
-    <ItemGroup>
-      <Content Include="..\README.md">
-        <Link>README.md</Link>
-      </Content>
-    </ItemGroup>
-    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
-    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-         Other similar extension points exist, see Microsoft.Common.targets.
-    <Target Name="BeforeBuild">
-    </Target>
-    <Target Name="AfterBuild">
-    </Target>
-    -->
-
 </Project>

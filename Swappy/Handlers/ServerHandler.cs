@@ -1,48 +1,33 @@
-﻿using System.Linq;
+﻿using System.Threading.Tasks;
 using LabApi.Events.Arguments.ServerEvents;
 using LabApi.Events.CustomHandlers;
-using LabApi.Features.Console;
 using LabApi.Loader;
 using LabApi.Loader.Features.Plugins;
-using Swappy.Configurations;
-using Swappy.Enums;
-using Swappy.Managers;
-
-#if EXILED
-using Exiled.API.Interfaces;
-using Exiled.Loader;
-#endif
+using Swappy.API.Interfaces;
 
 namespace Swappy.Handlers;
 
 public class ServerHandler : CustomEventsHandler
 {
-    private readonly Config _config;
-    public ServerHandler(Config config)
+    public override void OnServerWaitingForPlayers()
     {
-        _config = config;
+        foreach (Plugin plugin in PluginLoader.Plugins.Keys)
+        {
+            if (plugin is not ISwappyConfigurable repositoryPlugin)
+                continue;
+
+            _ = Task.Run(async () => await repositoryPlugin.RepositoryConfiguration.Resolve(plugin.Version));
+        }
     }
 
     public override void OnServerRoundEnded(RoundEndedEventArgs ev)
     {
-        if (_config.Configurations.IsEmpty())
-            return;
-        
-        Logger.Debug("Checking for plugin updates...");
-
-        foreach (PluginConfig pluginConfig in _config.Configurations)
+        foreach (Plugin plugin in PluginLoader.Plugins.Keys)
         {
-            if (pluginConfig.Cycle is CycleType.Never or not CycleType.EachRound)
+            if (plugin is not ISwappyConfigurable repositoryPlugin)
                 continue;
-        #if EXILED
-            IPlugin<IConfig>? plugin = Loader.Plugins.FirstOrDefault(x => x.Name == pluginConfig.PluginName);
-        #else 
-            Plugin? plugin = PluginLoader.Plugins.Keys.FirstOrDefault(x => x.Name == pluginConfig.PluginName);
-        #endif
-            if (plugin is null)
-                continue;
-            
-            GithubManager.UpdatePlugin(plugin, pluginConfig);
+
+            _ = Task.Run(async () => await repositoryPlugin.RepositoryConfiguration.Resolve(plugin.Version));
         }
     }
 }
