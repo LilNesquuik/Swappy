@@ -30,26 +30,17 @@ jobs:
       - name: Download SL References
         shell: pwsh
         run: |
-          Write-Host "Downloading game references from $env:SL_REFERENCES_URL"
-          
           $referencesDir = "${{ github.workspace }}/SCPSL/References"
           $zipFile = "${{ github.workspace }}/SCPSL/References.zip"
           
-          # Créer le dossier parent
           New-Item -ItemType Directory -Path (Split-Path $zipFile) -Force | Out-Null
-          
-          # Télécharger
           Invoke-WebRequest -Uri $env:SL_REFERENCES_URL -OutFile $zipFile -UseBasicParsing
           
-          # Nettoyer le dossier de destination s'il existe
           if (Test-Path $referencesDir) {
               Remove-Item $referencesDir -Recurse -Force
           }
           
-          # Extraire
           Expand-Archive -Path $zipFile -DestinationPath $referencesDir -Force
-          
-          Write-Host "References downloaded to: $referencesDir"
       
       - name: Restore dependencies
         working-directory: ./Swappy
@@ -65,14 +56,6 @@ jobs:
         working-directory: ./Swappy
         run: dotnet pack --configuration Release --no-build -p:PackageVersion=${{ env.PACKAGE_VERSION }} --output ../nupkg
       
-      - name: List created packages
-        shell: pwsh
-        run: |
-          Write-Host "Packages created:"
-          Get-ChildItem -Path "${{ github.workspace }}/nupkg" -Filter *.nupkg | ForEach-Object {
-              Write-Host "  - $($_.Name) ($([math]::Round($_.Length / 1KB, 2)) KB)"
-          }
-      
       - name: Upload to GitHub Release
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
@@ -83,13 +66,9 @@ jobs:
         shell: pwsh
         run: |
           $packages = Get-ChildItem -Path "${{ github.workspace }}/nupkg" -Filter *.nupkg
-          
           foreach ($package in $packages) {
-              Write-Host "Publishing $($package.Name) to NuGet.org..."
               dotnet nuget push $package.FullName `
                 --api-key ${{ secrets.NUGET_API_KEY }} `
                 --source https://api.nuget.org/v3/index.json `
                 --skip-duplicate
           }
-          
-          Write-Host "✅ Publication completed!"
