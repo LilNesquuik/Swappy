@@ -4,5 +4,5 @@ namespace Swappy.API.Interfaces;
 
 public interface ISwappyConfigurable
 {
-    public DependencyResource RepositoryConfiguration { get; }
+    public DependencyResource Repository { get; }
 }

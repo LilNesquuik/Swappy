@@ -39,7 +39,7 @@ public static class UpdateManager
                 };
             }
             else
-                resource = repositoryPlugin.RepositoryConfiguration;
+                resource = repositoryPlugin.Repository;
 
             tasks.Add(resource.Resolve(plugin.Version, assembly.GetName().Name!, plugin.FilePath));
         }
