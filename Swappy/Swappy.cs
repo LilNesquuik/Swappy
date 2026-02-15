@@ -13,7 +13,7 @@ public class Swappy : ManagedPlugin<Config>, ISwappyConfigurable
     public static Swappy Singleton;
     
     public override string Author => "LilNesquuik";
-    public override Version Version => new(2, 0, 5);
+    public override Version Version => new(2, 0, 0);
     public override string Name => "Swappy";
     public override string Description => "Your trusted companion for automatic plugin updates";
     public override Version RequiredApiVersion => LabApiProperties.CurrentVersion;
