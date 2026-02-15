@@ -62,15 +62,12 @@ jobs:
         SL_REFERENCES: ${{ env.SL_REFERENCES_PATH }}
       run: dotnet build --configuration Release --no-restore -p:Version=${{ env.PACKAGE_VERSION }}
       
-    - name: Pack NuGet (From Tag)
-      run: dotnet pack --configuration Release --no-build -p:PackageVersion=${{ env.PACKAGE_VERSION }} --output ./nupkg
-      
     - name: Upload artifact to Release
       if: github.event_name == 'release'
       uses: softprops/action-gh-release@v2
       with:
-        files: ./Swappy/nupkg/*.nupkg
+        files: ${{ github.workspace }}/nupkg/*.nupkg
         draft: false
-
+        
     - name: Publish to NuGet
-      run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      run: dotnet nuget push ${{ github.workspace }}/nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
