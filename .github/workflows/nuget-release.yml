@@ -34,10 +34,18 @@ jobs:
       shell: pwsh
       run: |
         Write-Host "Downloading game references..."
+        # Crée le dossier parent du ZIP si nécessaire
+        $zipDir = Split-Path $env:SL_REFERENCES_ZIP
+        if (-not (Test-Path $zipDir)) {
+            New-Item -ItemType Directory -Path $zipDir | Out-Null
+        }
+    
         Invoke-WebRequest -Uri $env:SL_REFERENCES_URL -OutFile $env:SL_REFERENCES_ZIP -UseBasicParsing
+    
         if (Test-Path $env:SL_REFERENCES_PATH) {
             Remove-Item $env:SL_REFERENCES_PATH -Recurse -Force
         }
+    
         Expand-Archive -Path $env:SL_REFERENCES_ZIP -DestinationPath $env:SL_REFERENCES_PATH -Force
 
     - name: Restore dependencies
