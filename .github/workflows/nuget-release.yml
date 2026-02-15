@@ -1,4 +1,4 @@
-name: Publish Nuget Release
+name: Publish NuGet Package
 
 on:
   release:
@@ -6,78 +6,90 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Package Version (ex: 1.0.0)'
+        description: 'Version du package (ex: 1.0.0)'
         required: true
         type: string
 
-defaults:
-  run:
-    working-directory: ./Swappy
-
 env:
   SL_REFERENCES_URL: https://exmod-team.github.io/SL-References/Dev.zip
-  SL_REFERENCES_PATH: ${{ github.workspace }}/SCPSL/References
-  SL_REFERENCES_ZIP: ${{ github.workspace }}/SCPSL/References.zip
   PACKAGE_VERSION: ${{ github.event.release.tag_name || github.event.inputs.version }}
 
 jobs:
-  push:
+  publish:
     runs-on: windows-latest
+    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4.1.7
-
-    - name: Setup .NET Core SDK
-      uses: actions/setup-dotnet@v4.0.1
+      - name: Checkout repository
+        uses: actions/checkout@v4
       
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v2
-
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v2
-
-    - name: Pull references
-      shell: pwsh
-      run: |
-        Write-Host "Downloading game references..."
-        # Crée le dossier parent du ZIP si nécessaire
-        $zipDir = Split-Path $env:SL_REFERENCES_ZIP
-        if (-not (Test-Path $zipDir)) {
-            New-Item -ItemType Directory -Path $zipDir | Out-Null
-        }
-    
-        Invoke-WebRequest -Uri $env:SL_REFERENCES_URL -OutFile $env:SL_REFERENCES_ZIP -UseBasicParsing
-    
-        if (Test-Path $env:SL_REFERENCES_PATH) {
-            Remove-Item $env:SL_REFERENCES_PATH -Recurse -Force
-        }
-    
-        Expand-Archive -Path $env:SL_REFERENCES_ZIP -DestinationPath $env:SL_REFERENCES_PATH -Force
-
-    - name: Restore dependencies
-      run: dotnet restore
-
-    - name: Build (Release)
-      env:
-        SL_REFERENCES: ${{ env.SL_REFERENCES_PATH }}
-      run: dotnet build --configuration Release --no-restore -p:Version=${{ env.PACKAGE_VERSION }}
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
       
-    - name: Upload artifact to Release
-      if: github.event_name == 'release'
-      uses: softprops/action-gh-release@v2
-      with:
-        files: ${{ github.workspace }}/nupkg/*.nupkg
-        draft: false
-        
-    - name: Publish to NuGet
-      shell: pwsh
-      run: |
-        $packages = Get-ChildItem -Path "${{ github.workspace }}/nupkg" -Filter *.nupkg
-        if ($packages.Count -eq 0) {
-          Write-Error "No .nupkg files found in ${{ github.workspace }}/nupkg"
-          exit 1
-        }
-        foreach ($package in $packages) {
-          Write-Host "Publishing $($package.Name)..."
-          dotnet nuget push $package.FullName --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
-        }
+      - name: Download SL References
+        shell: pwsh
+        run: |
+          Write-Host "Downloading game references from $env:SL_REFERENCES_URL"
+          
+          $referencesDir = "${{ github.workspace }}/SCPSL/References"
+          $zipFile = "${{ github.workspace }}/SCPSL/References.zip"
+          
+          # Créer le dossier parent
+          New-Item -ItemType Directory -Path (Split-Path $zipFile) -Force | Out-Null
+          
+          # Télécharger
+          Invoke-WebRequest -Uri $env:SL_REFERENCES_URL -OutFile $zipFile -UseBasicParsing
+          
+          # Nettoyer le dossier de destination s'il existe
+          if (Test-Path $referencesDir) {
+              Remove-Item $referencesDir -Recurse -Force
+          }
+          
+          # Extraire
+          Expand-Archive -Path $zipFile -DestinationPath $referencesDir -Force
+          
+          Write-Host "References downloaded to: $referencesDir"
+      
+      - name: Restore dependencies
+        working-directory: ./Swappy
+        run: dotnet restore
+      
+      - name: Build project
+        working-directory: ./Swappy
+        env:
+          SL_REFERENCES: ${{ github.workspace }}/SCPSL/References
+        run: dotnet build --configuration Release --no-restore -p:Version=${{ env.PACKAGE_VERSION }}
+      
+      - name: Create NuGet package
+        working-directory: ./Swappy
+        run: dotnet pack --configuration Release --no-build -p:PackageVersion=${{ env.PACKAGE_VERSION }} --output ../nupkg
+      
+      - name: List created packages
+        shell: pwsh
+        run: |
+          Write-Host "Packages created:"
+          Get-ChildItem -Path "${{ github.workspace }}/nupkg" -Filter *.nupkg | ForEach-Object {
+              Write-Host "  - $($_.Name) ($([math]::Round($_.Length / 1KB, 2)) KB)"
+          }
+      
+      - name: Upload to GitHub Release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: nupkg/*.nupkg
+      
+      - name: Publish to NuGet.org
+        shell: pwsh
+        run: |
+          $packages = Get-ChildItem -Path "${{ github.workspace }}/nupkg" -Filter *.nupkg
+          
+          foreach ($package in $packages) {
+              Write-Host "Publishing $($package.Name) to NuGet.org..."
+              dotnet nuget push $package.FullName `
+                --api-key ${{ secrets.NUGET_API_KEY }} `
+                --source https://api.nuget.org/v3/index.json `
+                --skip-duplicate
+          }
+          
+          Write-Host "✅ Publication completed!"
