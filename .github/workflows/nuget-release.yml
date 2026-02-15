@@ -1,46 +1,69 @@
-name: Publish NuGet on Release
+name: Publish Nuget Release
 
 on:
   release:
     types: [published]
   workflow_dispatch:
 
+defaults:
+  run:
+    working-directory: ./Swappy
+
+env:
+  SL_REFERENCES_URL: https://exmod-team.github.io/SL-References/Dev.zip
+  SL_REFERENCES_PATH: ${{ github.workspace }}/SCPSL/References
+  SL_REFERENCES_ZIP: ${{ github.workspace }}/SCPSL/References.zip
+
 jobs:
-  build:
+  push:
     runs-on: windows-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4.1.7
 
-      - name: Setup .NET 8 SDK
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v4.0.1
+      
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
 
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
 
-      - name: Restore dependencies
-        run: dotnet restore
+    - name: Pull references
+      shell: pwsh
+      run: |
+        Write-Host "Downloading game references..."
+        Invoke-WebRequest -Uri $env:SL_REFERENCES_URL -OutFile $env:SL_REFERENCES_ZIP -UseBasicParsing
+        if (Test-Path $env:SL_REFERENCES_PATH) {
+            Remove-Item $env:SL_REFERENCES_PATH -Recurse -Force
+        }
+        Expand-Archive -Path $env:SL_REFERENCES_ZIP -DestinationPath $env:SL_REFERENCES_PATH -Force
 
-      - name: Build (Release)
-        run: dotnet build --configuration Release --no-restore
+    - name: Restore dependencies
+      run: dotnet restore
 
-      - name: Pack NuGet (version from tag)
-        run: |
-          dotnet pack \
-            --configuration Release \
-            --no-build \
-            -p:PackageVersion=${{ github.event.release.tag_name }} \
-            --output ./nupkg
+    - name: Build (Release)
+      env:
+        SL_REFERENCES: ${{ env.SL_REFERENCES_PATH }}
+      run: dotnet build --configuration Release --no-restore -p:Version=${{ github.event.release.tag_name }}
 
-      - name: Upload artifact to Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ./nupkg/*.nupkg
+    - name: Pack NuGet (From Tag)
+      run: |
+        dotnet pack \
+          --configuration Release \
+          --no-build \
+          -p:PackageVersion=${{ github.event.release.tag_name }} \
+          --output ./nupkg
 
-      - name: Publish to NuGet
-        run: dotnet nuget push ./nupkg/*.nupkg \
-          --api-key ${{ secrets.NUGET_API_KEY }} \
-          --source https://api.nuget.org/v3/index.json
+    - name: Upload artifact to Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: ./nupkg/*.nupkg
+        draft: false
+
+    - name: Publish to NuGet
+      run: dotnet nuget push ./nupkg/*.nupkg \
+        --api-key ${{ secrets.NUGET_API_KEY }} \
+        --source https://api.nuget.org/v3/index.json \
+        --skip-duplicate
