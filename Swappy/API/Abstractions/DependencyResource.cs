@@ -5,5 +5,5 @@ namespace Swappy.API.Abstractions;
 
 public abstract class DependencyResource
 {
-    public abstract Task Resolve(Version current);
+    public abstract Task Resolve(Version current, string fileName);
 }

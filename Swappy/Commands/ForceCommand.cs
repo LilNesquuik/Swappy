@@ -7,6 +7,7 @@ using LabApi.Features.Permissions;
 using LabApi.Loader;
 using LabApi.Loader.Features.Plugins;
 using Swappy.API.Interfaces;
+using Swappy.Managers;
 
 namespace Swappy.Commands;
 
@@ -27,17 +28,8 @@ public class ForceCommand : ICommand
             return false;
         }
 
-        List<Plugin> plugins = [];
-        foreach (Plugin plugin in PluginLoader.Plugins.Keys)
-        {
-            if (plugin is not ISwappyConfigurable repositoryPlugin)
-                continue;
-
-            plugins.Add(plugin);
-            _ = Task.Run(async () => await repositoryPlugin.RepositoryConfiguration.Resolve(plugin.Version));
-        }
-
-        response = "Forced updated: " + string.Join(", ", plugins.Select(p => p.Name));
+        _ = UpdateManager.CheckForUpdates();
+        response = "Forced updated for all plugins.";
         return true;
     }
 

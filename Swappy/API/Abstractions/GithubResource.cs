@@ -13,17 +13,35 @@ using System.Threading.Tasks;
 
 namespace Swappy.API.Abstractions;
 
+/// <summary>
+/// Represents a GitHub resource. It can be used to check for updates and download new versions of plugins from GitHub releases.
+/// </summary>
 public class GithubResource : DependencyResource
 {
+    /// <summary>
+    /// The name of the GitHub repository (e.g. "LilNesquuik").
+    /// </summary>
     public required string Repository { get; init; }
+    
+    /// <summary>
+    /// The name of the Github repository author (e.g. "Swappy").
+    /// </summary>
     public required string Author { get; init; }
-    public required string FileName { get; init; }
+    
+    /// <summary>
+    /// Indicates whether the repository is private.
+    /// If true, the resolver will use the access token provided in Swappy's config to authenticate with GitHub and access private repositories.
+    /// If false, it will access public repositories without authentication.
+    /// Note: If the repository is private and no access token is provided, the resolver will fail to access the repository and log an error.
+    /// </summary>
     public bool IsPrivate { get; init; }
+    
+    /// <summary>
+    /// Indicates whether pre-release versions should be considered when checking for updates.
+    /// </summary>
     public bool UsePreRelease { get; init; } 
     
-    public Action<Version>? Callback { get; init; }
-    
-    public override async Task Resolve(Version current)
+    public override async Task Resolve(Version current, string fileName)
     {
         string token = string.Empty;
         if (IsPrivate && !string.IsNullOrEmpty(Swappy.Singleton.Config!.AccessToken))
@@ -44,23 +62,23 @@ public class GithubResource : DependencyResource
             Release? targetRelease = GetValid(current, releases, out GithubReason reason);
             if (targetRelease == null)
             {
-                Logger.Warn($"No valid release found for {FileName}. Reason: {reason}");
+                Logger.Warn($"No valid release found for {fileName}. Reason: {reason}");
                 return;
             }
 
-            Logger.Info($"Found release {targetRelease.TagName} for {FileName}");
+            Logger.Info($"Found release {targetRelease.TagName} for {fileName}");
 
-            ReleaseAsset? asset = targetRelease.Assets.FirstOrDefault(a => a.Name.Equals($"{FileName}.dll", StringComparison.OrdinalIgnoreCase));
+            ReleaseAsset? asset = targetRelease.Assets.FirstOrDefault(a => a.Name.Equals($"{fileName}.dll", StringComparison.OrdinalIgnoreCase));
             if (asset == null)
             {
-                Logger.Error($"Asset '{FileName}.dll' not found in release '{targetRelease.TagName}'.");
+                Logger.Error($"Asset '{fileName}.dll' not found in release '{targetRelease.TagName}'.");
                 return;
             }
 
             string outputDirectory = PathManager.Dependencies.FullName;
             Directory.CreateDirectory(outputDirectory);
 
-            string outputPath = Path.Combine(outputDirectory, $"{FileName}.dll");
+            string outputPath = Path.Combine(outputDirectory, $"{fileName}.dll");
 
             using HttpClient httpClient = new HttpClient();
             httpClient.Timeout = TimeSpan.FromSeconds(60);
@@ -84,7 +102,7 @@ public class GithubResource : DependencyResource
             
             MainThreadDispatcher.Dispatch(() =>
             {
-                Logger.Info($"Successfully downloaded {FileName}.dll from {Author}/{Repository} to: {targetRelease.TagName}");
+                Logger.Info($"Successfully downloaded {fileName}.dll from {Author}/{Repository} to: {targetRelease.TagName}");
                 ServerStatic.StopNextRound = ServerStatic.NextRoundAction.Restart;
             });
         }
@@ -93,8 +111,6 @@ public class GithubResource : DependencyResource
             Logger.Error($"Failed to resolve GitHub resource: {ex.Message}");
             throw;
         }
-        
-        Callback?.Invoke(current);
     }
 
     public Release? GetValid(Version current, IReadOnlyList<Release> releases, out GithubReason reason)
