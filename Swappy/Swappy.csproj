@@ -23,6 +23,11 @@
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <NoWarn>CS1591</NoWarn>
+
+        <PackageId>Swappy</PackageId>
+        <Authors>LilNesquuik</Authors>
+        <Description>Lightweight plugin dedicated to update your plugins</Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Northwood.LabAPI" Version="1.1.5" />
