@@ -57,21 +57,13 @@ jobs:
       run: dotnet build --configuration Release --no-restore -p:Version=${{ github.event.release.tag_name }}
 
     - name: Pack NuGet (From Tag)
-      run: |
-        dotnet pack \
-          --configuration Release \
-          --no-build \
-          -p:PackageVersion=${{ github.event.release.tag_name }} \
-          --output ./nupkg
+      run: dotnet pack --configuration Release --no-build -p:PackageVersion=${{ github.event.release.tag_name }} --output ./nupkg
 
     - name: Upload artifact to Release
       uses: softprops/action-gh-release@v2
       with:
-        files: ./nupkg/*.nupkg
+        files: ./Swappy/nupkg/*.nupkg
         draft: false
 
     - name: Publish to NuGet
-      run: dotnet nuget push ./nupkg/*.nupkg \
-        --api-key ${{ secrets.NUGET_API_KEY }} \
-        --source https://api.nuget.org/v3/index.json \
-        --skip-duplicate
+      run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
