@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Swappy.API.Abstractions;
+namespace Swappy.API.Features;
 
 public abstract class DependencyResource
 {

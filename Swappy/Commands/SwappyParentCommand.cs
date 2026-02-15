@@ -5,10 +5,10 @@ using LabApi.Loader.Features.Commands.Extensions;
 namespace Swappy.Commands;
 
 [CommandHandler(typeof(RemoteAdminCommandHandler))]
-public class SwappyParentCommand : ParentCommand
+public sealed class SwappyParentCommand : ParentCommand
 {
     public override string Command => "swappy";
-    public override string[] Aliases => Array.Empty<string>();
+    public override string[] Aliases { get; } = ["swp", "updater"];
     public override string Description => "Swappy Parent command";
     
     public override void LoadGeneratedCommands() { }

@@ -1,17 +1,17 @@
-﻿using LabApi.Features.Console;
-using LabApi.Loader.Features.Paths;
-using Octokit;
-using Swappy.API.Extensions;
-using ProductHeaderValue = Octokit.ProductHeaderValue;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System;
 using System.Threading.Tasks;
+using LabApi.Features.Console;
+using LabApi.Loader.Features.Paths;
+using Octokit;
+using Swappy.API.Extensions;
+using ProductHeaderValue = Octokit.ProductHeaderValue;
 
-namespace Swappy.API.Abstractions;
+namespace Swappy.API.Features;
 
 /// <summary>
 /// Represents a GitHub resource. It can be used to check for updates and download new versions of plugins from GitHub releases.
@@ -113,7 +113,7 @@ public class GithubResource : DependencyResource
         }
     }
 
-    public Release? GetValid(Version current, IReadOnlyList<Release> releases, out GithubReason reason)
+    private Release? GetValid(Version current, IReadOnlyList<Release> releases, out GithubReason reason)
     {
         reason = GithubReason.NoValidReleaseFound;
         

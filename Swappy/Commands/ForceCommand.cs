@@ -1,24 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CommandSystem;
 using LabApi.Features.Permissions;
-using LabApi.Loader;
-using LabApi.Loader.Features.Plugins;
-using Swappy.API.Interfaces;
 using Swappy.Managers;
 
 namespace Swappy.Commands;
 
 [CommandHandler(typeof(SwappyParentCommand))]
-public class ForceCommand : ICommand
+public sealed class ForceCommand : ICommand
 {
     public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
     {
-        if (!sender.HasPermissions("swappy." + Command))
+        if (!sender.HasPermissions("swappy.force"))
         {
-            response = "You do not have permission to execute this command. Required: swappy."+Command;
+            response = "You do not have permission to execute this command. Required: swappy.force";
             return false;
         }
 

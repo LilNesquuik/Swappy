@@ -3,7 +3,7 @@ using LabApi.Events.Handlers;
 using LabApi.Features;
 using LabApi.Loader.Features.Plugins;
 using LabApi.Loader.Features.Plugins.Enums;
-using Swappy.API.Abstractions;
+using Swappy.API.Features;
 using Swappy.API.Interfaces;
 using Swappy.Handlers;
 
@@ -14,7 +14,7 @@ public class Swappy : Plugin<Config>, ISwappyConfigurable
     public static Swappy Singleton;
     
     public override string Author => "LilNesquuik";
-    public override Version Version => new(2, 0, 1);
+    public override Version Version => new(2, 0, 2);
     public override string Name => "Swappy";
     public override string Description => "Your trusted companion for automatic plugin updates";
     public override Version RequiredApiVersion => LabApiProperties.CurrentVersion;

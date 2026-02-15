@@ -1,4 +1,4 @@
-﻿using Swappy.API.Abstractions;
+﻿using Swappy.API.Features;
 
 namespace Swappy.API.Interfaces;
 
