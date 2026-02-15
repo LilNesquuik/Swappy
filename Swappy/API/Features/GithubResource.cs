@@ -41,7 +41,7 @@ public class GithubResource : DependencyResource
     /// </summary>
     public bool UsePreRelease { get; init; } 
     
-    public override async Task Resolve(Version current, string fileName)
+    public override async Task Resolve(Version current, string fileName, string outputPath)
     {
         string token = string.Empty;
         if (IsPrivate && !string.IsNullOrEmpty(Swappy.Singleton.Config!.AccessToken))
@@ -75,11 +75,6 @@ public class GithubResource : DependencyResource
                 return;
             }
 
-            string outputDirectory = PathManager.Dependencies.FullName;
-            Directory.CreateDirectory(outputDirectory);
-
-            string outputPath = Path.Combine(outputDirectory, $"{fileName}.dll");
-
             using HttpClient httpClient = new HttpClient();
             httpClient.Timeout = TimeSpan.FromSeconds(60);
             httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Swappy");
@@ -87,7 +82,7 @@ public class GithubResource : DependencyResource
             if (!string.IsNullOrWhiteSpace(token))
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            using HttpResponseMessage? response = await httpClient.GetAsync(asset.BrowserDownloadUrl);
+            using HttpResponseMessage? response = await httpClient.GetAsync(IsPrivate ? asset.Url : asset.BrowserDownloadUrl);
             response.EnsureSuccessStatusCode();
 
             byte[]? bytes = await response.Content.ReadAsByteArrayAsync();

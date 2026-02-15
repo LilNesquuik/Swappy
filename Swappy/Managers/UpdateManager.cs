@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Threading.Tasks;
 using LabApi.Loader;
+using LabApi.Loader.Features.Paths;
 using LabApi.Loader.Features.Plugins;
 using Swappy.API.Configurations;
 using Swappy.API.Features;
@@ -40,7 +41,7 @@ public static class UpdateManager
             else
                 resource = repositoryPlugin.RepositoryConfiguration;
 
-            tasks.Add(resource.Resolve(plugin.Version, assembly.GetName().Name!));
+            tasks.Add(resource.Resolve(plugin.Version, assembly.GetName().Name!, plugin.FilePath));
         }
         
         if (tasks.Count == 0)
