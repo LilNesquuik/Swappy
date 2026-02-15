@@ -70,4 +70,14 @@ jobs:
         draft: false
         
     - name: Publish to NuGet
-      run: dotnet nuget push ${{ github.workspace }}/nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      shell: pwsh
+      run: |
+        $packages = Get-ChildItem -Path "${{ github.workspace }}/nupkg" -Filter *.nupkg
+        if ($packages.Count -eq 0) {
+          Write-Error "No .nupkg files found in ${{ github.workspace }}/nupkg"
+          exit 1
+        }
+        foreach ($package in $packages) {
+          Write-Host "Publishing $($package.Name)..."
+          dotnet nuget push $package.FullName --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+        }
