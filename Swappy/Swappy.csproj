@@ -118,4 +118,7 @@
             <HintPath>$(SL_REFERENCES)\UnityEngine.PhysicsModule.dll</HintPath>
         </Reference>
     </ItemGroup>
+    <ItemGroup>
+      <Content Include=".github\workflows\nuget.yml" />
+    </ItemGroup>
 </Project>
