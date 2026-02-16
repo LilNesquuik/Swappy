@@ -11,7 +11,7 @@ on:
         type: string
 
 env:
-  SL_REFERENCES_URL: https://exmod-team.github.io/SL-References/Dev.zip
+  SL_REFERENCES_URL: https://lilnesquuik.github.io/SLReferences.zip
   PACKAGE_VERSION: ${{ github.event.release.tag_name || github.event.inputs.version }}
 
 jobs:
