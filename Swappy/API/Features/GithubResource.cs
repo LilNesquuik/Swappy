@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using LabApi.Features.Console;
 using LabApi.Loader.Features.Paths;
@@ -78,6 +79,7 @@ public class GithubResource : DependencyResource
             using HttpClient httpClient = new HttpClient();
             httpClient.Timeout = TimeSpan.FromSeconds(60);
             httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Swappy");
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Octet));
 
             if (!string.IsNullOrWhiteSpace(token))
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
