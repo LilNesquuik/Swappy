@@ -1,6 +1,8 @@
 using System;
+using HarmonyLib;
 using LabApi.Events.Handlers;
 using LabApi.Features;
+using LabApi.Features.Console;
 using LabApi.Loader.Features.Plugins.Enums;
 using Swappy.API.Features;
 using Swappy.API.Interfaces;
@@ -13,7 +15,7 @@ public class Swappy : ManagedPlugin<Config>, ISwappyConfigurable
     public static Swappy Singleton;
     
     public override string Author => "LilNesquuik";
-    public override Version Version => new(2, 0, 2);
+    public override Version Version => new(2, 1, 0);
     public override string Name => "Swappy";
     public override string Description => "Your trusted companion for automatic plugin updates";
     public override Version RequiredApiVersion => LabApiProperties.CurrentVersion;
@@ -24,6 +26,10 @@ public class Swappy : ManagedPlugin<Config>, ISwappyConfigurable
         Author = "LilNesquuik",
     };
     
+    public DateTimeOffset LastUpdateCheck { get; internal set; }
+    
+    private Harmony _harmony;
+    
     private ServerHandler _serverHandler;
     
     public override void Enable()
@@ -31,6 +37,17 @@ public class Swappy : ManagedPlugin<Config>, ISwappyConfigurable
         Singleton = this;
         
         _serverHandler = new ServerHandler();
+        
+        _harmony = new Harmony("com.lilnesquuik.swappy");
+        
+        try
+        {
+            _harmony.PatchAll();   
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Failed to patch: {e}");
+        }   
         
         ServerEvents.WaitingForPlayers += _serverHandler.OnServerWaitingForPlayers;
         ServerEvents.RoundEnded += _serverHandler.OnServerRoundEnded;
