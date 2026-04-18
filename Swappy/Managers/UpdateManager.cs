@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using LabApi.Features.Console;
 using LabApi.Loader;
-using LabApi.Loader.Features.Paths;
 using LabApi.Loader.Features.Plugins;
 using Swappy.API.Configurations;
 using Swappy.API.Features;
@@ -19,7 +21,13 @@ public static class UpdateManager
     /// <returns>the number of plugins that will be checked</returns>
     public static async Task<int> CheckForUpdates()
     {
-        List<Task> tasks = [];
+        if (Swappy.Singleton.LastUpdateCheck + TimeSpan.FromMinutes(Swappy.Singleton.Config.RateLimitMinutes) > DateTimeOffset.UtcNow)
+        {
+            Logger.Warn("Update check skipped - last check was too recent");
+            return 0;
+        }
+        
+        List<Task<bool>> tasks = [];
         foreach ((Plugin plugin, Assembly assembly) in PluginLoader.Plugins)
         {
             DependencyResource resource;
@@ -44,13 +52,10 @@ public static class UpdateManager
             tasks.Add(resource.Resolve(plugin.Version, assembly.GetName().Name!, plugin.FilePath));
         }
         
-        if (tasks.Count == 0)
-            return 0;
+        bool[] results = await Task.WhenAll(tasks);
         
-        await Task.WhenAll(tasks);
+        Swappy.Singleton.LastUpdateCheck = DateTimeOffset.UtcNow;
         
-        ServerStatic.StopNextRound = ServerStatic.NextRoundAction.Restart;
-        
-        return tasks.Count;
+        return results.Count(x => x);
     }
 }

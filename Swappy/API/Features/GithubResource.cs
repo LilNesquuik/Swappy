@@ -42,7 +42,7 @@ public class GithubResource : DependencyResource
     /// </summary>
     public bool UsePreRelease { get; init; } 
     
-    public override async Task Resolve(Version current, string fileName, string outputPath)
+    public override async Task<bool> Resolve(Version current, string fileName, string outputPath)
     {
         string token = string.Empty;
         if (IsPrivate && !string.IsNullOrEmpty(Swappy.Singleton.Config!.AccessToken))
@@ -64,7 +64,7 @@ public class GithubResource : DependencyResource
             if (targetRelease == null)
             {
                 Logger.Warn($"No valid release found for {fileName}. Reason: {reason}");
-                return;
+                return false;
             }
 
             Logger.Info($"Found release {targetRelease.TagName} for {fileName}");
@@ -73,7 +73,7 @@ public class GithubResource : DependencyResource
             if (asset == null)
             {
                 Logger.Error($"Asset '{fileName}.dll' not found in release '{targetRelease.TagName}'.");
-                return;
+                return false;
             }
 
             using HttpClient httpClient = new HttpClient();
@@ -92,7 +92,7 @@ public class GithubResource : DependencyResource
             if (bytes.Length == 0)
             {
                 Logger.Error("Empty file downloaded.");
-                return;
+                return false;
             }
 
             await File.WriteAllBytesAsync(outputPath, bytes);
@@ -102,6 +102,8 @@ public class GithubResource : DependencyResource
                 Logger.Info($"Successfully downloaded {fileName}.dll from {Author}/{Repository} to: {targetRelease.TagName}");
                 ServerStatic.StopNextRound = ServerStatic.NextRoundAction.Restart;
             });
+            
+            return true;
         }
         catch (Exception ex)
         {
