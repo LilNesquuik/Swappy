@@ -1,0 +1,4 @@
+motd: '{{ vars.motd }}'
+key: '{{ vars.nested.key }}'
+id: '{{ server.id }}'
+token: '{{secrets.token}}'

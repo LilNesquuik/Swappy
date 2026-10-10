@@ -1,0 +1,17 @@
+{
+  "plugins": [
+    "../../src/Swappy/bin/Release/Swappy.dll",
+    "../../src/Swappy.Configs/bin/Release/Swappy.Configs.dll"
+  ],
+  "dependencies": [
+    "../../src/Swappy/bin/Release/Octokit.dll"
+  ],
+  "files": [
+    { "source": "Fixtures/swappy.yml", "root": "labapiConfig", "target": "Swappy/config.yml" }
+  ],
+  "failOnSkipped": true,
+  "port": 7790,
+  "timeoutSeconds": 300,
+  "reports": "../../TestResults",
+  "work": "../../.labtest-work"
+}

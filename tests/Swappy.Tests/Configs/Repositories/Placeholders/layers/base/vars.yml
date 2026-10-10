@@ -1,0 +1,3 @@
+motd: base
+nested:
+  key: deep

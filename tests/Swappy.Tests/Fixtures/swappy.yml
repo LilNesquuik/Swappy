@@ -1,0 +1,8 @@
+# Swappy is frozen so that the test server never downloads a release over the build under test.
+access_token:
+rate_limit_minutes: 30
+check_on_exit_idle: false
+webhook_url:
+frozen_plugins:
+- Swappy
+manual_configurations: []

@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <RootNamespace>Swappy.Tests</RootNamespace>
+        <AssemblyName>Swappy.Tests</AssemblyName>
+        <!-- Test methods are not public API: no XML documentation. -->
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+        <LabTestingConfig>$(MSBuildThisFileDirectory)labtesting.json</LabTestingConfig>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="LabTesting" Version="0.5.0" PrivateAssets="all" />
+        <ProjectReference Include="../../src/Swappy/Swappy.csproj" />
+        <ProjectReference Include="../../src/Swappy.Configs/Swappy.Configs.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <!-- Named after their path ("Merge/servers.yml") instead of MSBuild's dotted default, which
+             loses the difference between folders and dots in file names. -->
+        <EmbeddedResource Include="Configs/Repositories/**/*" LogicalName="$([System.String]::Copy('%(RecursiveDir)%(Filename)%(Extension)').Replace('\', '/'))" />
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Include="Assembly-CSharp" HintPath="$(SL_REFERENCES)/Assembly-CSharp.dll" Private="false" />
+        <Reference Include="CommandSystem.Core" HintPath="$(SL_REFERENCES)/CommandSystem.Core.dll" Private="false" />
+        <Reference Include="Mirror" HintPath="$(SL_REFERENCES)/Mirror.dll" Private="false" />
+        <Reference Include="UnityEngine.CoreModule" HintPath="$(SL_REFERENCES)/UnityEngine.CoreModule.dll" Private="false" />
+    </ItemGroup>
+</Project>
