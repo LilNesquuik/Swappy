@@ -3,6 +3,10 @@
     <BuildType Name="Release" />
   </Configurations>
   <Folder Name="/src/">
+    <Project Path="src/Swappy.Configs/Swappy.Configs.csproj" />
     <Project Path="src/Swappy/Swappy.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Swappy.Tests/Swappy.Tests.csproj" />
   </Folder>
 </Solution>
