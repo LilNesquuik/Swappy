@@ -25,7 +25,7 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          global-json-file: global.json
       
       - name: Download SL References
         shell: pwsh
@@ -43,18 +43,18 @@ jobs:
           Expand-Archive -Path $zipFile -DestinationPath $referencesDir -Force
       
       - name: Restore dependencies
-        working-directory: ./Swappy
+        working-directory: ./src/Swappy
         run: dotnet restore
       
       - name: Build project
-        working-directory: ./Swappy
+        working-directory: ./src/Swappy
         env:
           SL_REFERENCES: ${{ github.workspace }}/SCPSL/References
         run: dotnet build --configuration Release --no-restore -p:Version=${{ env.PACKAGE_VERSION }}
       
       - name: Create NuGet package
-        working-directory: ./Swappy
-        run: dotnet pack --configuration Release --no-build -p:PackageVersion=${{ env.PACKAGE_VERSION }} --output ../nupkg
+        working-directory: ./src/Swappy
+        run: dotnet pack --configuration Release --no-build -p:PackageVersion=${{ env.PACKAGE_VERSION }} --output ../../nupkg
       
       - name: Upload to GitHub Release
         if: github.event_name == 'release'
