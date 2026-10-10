@@ -1,28 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProjectGuid>{B31A9EB2-75EE-4E7C-B2B5-73319974D41B}</ProjectGuid>
-        <OutputType>Library</OutputType>
-        <AppDesignerFolder>Properties</AppDesignerFolder>
         <RootNamespace>Swappy</RootNamespace>
         <AssemblyName>Swappy</AssemblyName>
-        <TargetFramework>net48</TargetFramework>
-        <FileAlignment>512</FileAlignment>
-        <LangVersion>12</LangVersion>
-        <PlatformTarget>x64</PlatformTarget>
-        <Optimize>true</Optimize>
-        <OutputPath>bin\Release\</OutputPath>
         <DefineConstants>TRACE</DefineConstants>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-        <Nullable>enable</Nullable>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <NoWarn>CS1591</NoWarn>
 
         <PackageId>Swappy</PackageId>
         <Authors>LilNesquuik</Authors>
@@ -30,14 +11,13 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Lib.Harmony" Version="2.2.2" />
+        <PackageReference Include="Lib.Harmony" Version="2.3.6" />
         <PackageReference Include="Northwood.LabAPI" Version="1.1.6.1" />
         <PackageReference Include="Octokit" Version="14.0.0" />
+        <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" PrivateAssets="all" />
     </ItemGroup>
     <ItemGroup>
-        <Reference Include="Assembly-CSharp">
-            <HintPath>$(SL_REFERENCES)\Assembly-CSharp-Publicized.dll</HintPath>
-        </Reference>
+        <Reference Include="Assembly-CSharp" HintPath="$(SL_REFERENCES)\Assembly-CSharp.dll" Publicize="true" />
         <Reference Include="Assembly-CSharp-firstpass">
             <HintPath>$(SL_REFERENCES)\Assembly-CSharp-firstpass.dll</HintPath>
         </Reference>

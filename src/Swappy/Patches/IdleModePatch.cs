@@ -9,6 +9,10 @@ using Swappy.Managers;
 
 namespace Swappy.Patches;
 
+/// <summary>
+/// Checks for updates when the server leaves idle mode, and restarts the round if something was
+/// updated. See <see cref="Config.CheckOnExitIdle"/>.
+/// </summary>
 [HarmonyPatch(typeof(IdleMode))]
 internal static class IdleModePatch
 {

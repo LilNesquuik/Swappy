@@ -10,38 +10,51 @@ using LabApi.Features.Console;
 using LabApi.Loader.Features.Paths;
 using Octokit;
 using Swappy.API.Extensions;
+using Swappy.Managers;
 using ProductHeaderValue = Octokit.ProductHeaderValue;
 
 namespace Swappy.API.Features;
 
 /// <summary>
-/// Represents a GitHub resource. It can be used to check for updates and download new versions of plugins from GitHub releases.
+/// Downloads a plugin's new versions from the releases of a GitHub repository.
 /// </summary>
+/// <remarks>
+/// A release is picked when it is not a draft, its tag reads as a version higher than the loaded
+/// one (see <see cref="Extensions.VersionExtensions.ToVersion"/>), and it has an asset named
+/// <c>&lt;assembly name&gt;.dll</c>.
+/// </remarks>
 public class GithubResource : DependencyResource
 {
     /// <summary>
-    /// The name of the GitHub repository (e.g. "LilNesquuik").
+    /// Gets the name of the repository (e.g. <c>Swappy</c>).
     /// </summary>
     public required string Repository { get; init; }
-    
+
     /// <summary>
-    /// The name of the Github repository author (e.g. "Swappy").
+    /// Gets the GitHub user or organization that owns the repository (e.g. <c>LilNesquuik</c>).
     /// </summary>
     public required string Author { get; init; }
-    
+
     /// <summary>
-    /// Indicates whether the repository is private.
-    /// If true, the resolver will use the access token provided in Swappy's config to authenticate with GitHub and access private repositories.
-    /// If false, it will access public repositories without authentication.
-    /// Note: If the repository is private and no access token is provided, the resolver will fail to access the repository and log an error.
+    /// Gets a value indicating whether the repository is private, in which case requests are
+    /// authenticated with <see cref="Config.AccessToken"/>.
     /// </summary>
+    /// <remarks>
+    /// A private repository without a token cannot be read: the check fails and logs an error.
+    /// </remarks>
     public bool IsPrivate { get; init; }
-    
+
     /// <summary>
-    /// Indicates whether pre-release versions should be considered when checking for updates.
+    /// Gets a value indicating whether pre-releases are considered.
     /// </summary>
-    public bool UsePreRelease { get; init; } 
-    
+    public bool UsePreRelease { get; init; }
+
+    /// <inheritdoc/>
+    /// <remarks>
+    /// The previous DLL is kept next to the new one as <c>.bak</c>, for
+    /// <see cref="Commands.RollbackCommand"/>. On success, the webhook is notified and the server
+    /// restarts at the end of the round.
+    /// </remarks>
     public override async Task<bool> Resolve(Version current, string fileName, string outputPath)
     {
         string token = string.Empty;
@@ -59,7 +72,11 @@ public class GithubResource : DependencyResource
                     Credentials = new Credentials(token)
                 };
 
-            IReadOnlyList<Release>? releases = await client.Repository.Release.GetAll(Author, Repository);
+            // ponytail: GetLatest = 1 lighter API call; only prereleases need the full listing
+            IReadOnlyList<Release> releases = UsePreRelease
+                ? await client.Repository.Release.GetAll(Author, Repository)
+                : [await client.Repository.Release.GetLatest(Author, Repository)];
+
             Release? targetRelease = GetValid(current, releases, out GithubReason reason);
             if (targetRelease == null)
             {
@@ -95,20 +112,38 @@ public class GithubResource : DependencyResource
                 return false;
             }
 
-            await File.WriteAllBytesAsync(outputPath, bytes);
-            
+            string tempPath = outputPath + ".tmp";
+            await File.WriteAllBytesAsync(tempPath, bytes);
+
+            if (File.Exists(outputPath))
+                File.Replace(tempPath, outputPath, outputPath + ".bak");
+            else
+                File.Move(tempPath, outputPath);
+
+            _ = WebhookNotifier.SendUpdate(fileName, current, targetRelease.TagName, targetRelease.Body);
+
             MainThreadDispatcher.Dispatch(() =>
             {
                 Logger.Info($"Successfully downloaded {fileName}.dll from {Author}/{Repository} to: {targetRelease.TagName}");
                 ServerStatic.StopNextRound = ServerStatic.NextRoundAction.Restart;
             });
-            
+
             return true;
+        }
+        catch (RateLimitExceededException ex)
+        {
+            Logger.Error($"GitHub rate limit exceeded while checking {fileName}. Resets at {ex.Reset:u}.");
+            return false;
+        }
+        catch (NotFoundException)
+        {
+            Logger.Warn($"No release found for {fileName} ({Author}/{Repository}).");
+            return false;
         }
         catch (Exception ex)
         {
             Logger.Error($"Failed to resolve GitHub resource: {ex.Message}");
-            throw;
+            return false;
         }
     }
 
@@ -141,16 +176,31 @@ public class GithubResource : DependencyResource
         return null;
     }
     
+    /// <summary>
+    /// Why a release was or was not selected, as written in the log.
+    /// </summary>
     public enum GithubReason
     {
+        /// <summary>A newer release was found.</summary>
         Done,
+
+        /// <summary>No release is usable: drafts, skipped pre-releases, or tags without a version.</summary>
         NoValidReleaseFound,
+
+        /// <summary>The release has no asset named after the assembly.</summary>
         AssetNotFound,
+
+        /// <summary>The downloaded asset was empty.</summary>
         EmptyFileDownloaded,
+
+        /// <summary>The newest usable release is not higher than the loaded version.</summary>
         AlreadyUpToDate,
+
+        /// <summary>Any other failure.</summary>
         Other,
     }
-    
+
+    /// <inheritdoc/>
     public override string ToString()
     {
         return $"GithubResource: {Author}/{Repository}";
